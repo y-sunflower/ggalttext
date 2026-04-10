@@ -37,5 +37,5 @@ jobs:
       - name: Run unit tests
         run: |
           devtools::install()
-          testthat::test_dir("tests/testthat", stop_on_failure = TRUE)
+          devtools::test(stop_on_failure = TRUE)
         shell: Rscript {0}
