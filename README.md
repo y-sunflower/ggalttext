@@ -42,5 +42,7 @@ plot <- ggplot(babynames, aes(x = year, y = n, group = name, fill = name)) +
 
 ```r
 generate_alt_text(plot)
-#> "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title: 'Popularity of American names in the previous 30 years'."
+#> "Area Chart. The data is split into 6 small charts arranged
+# in a 2 row(s) by 3 col(s) grid. Title: 'Popularity of American
+# names in the previous 30 years'."
 ```

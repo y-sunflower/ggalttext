@@ -17,9 +17,11 @@
 #'
 #' @return A string
 #'
+#' @import ggplot2
+#'
 #' @export
 generate_alt_text <- function(p) {
-    b <- ggplot2::ggplot_build(p)
+    b <- ggplot_build(p)
 
     pieces <- c(
         describe_chart_type_sentence(p),

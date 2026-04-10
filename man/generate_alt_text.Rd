@@ -24,4 +24,6 @@ gives an overview of what's inside the chart such as:
 \item the number of chart(s) for facets
 \item the title, subtitle and caption
 }
+
+Learn more: https://www.section508.gov/create/alternative-text/
 }

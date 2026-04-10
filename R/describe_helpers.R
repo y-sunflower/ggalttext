@@ -16,7 +16,7 @@ describe_chart_type_sentence <- function(p) {
     if (!length(chart_types)) {
         sentence <- "Chart, without more information."
     } else if (length(chart_types) == 1) {
-        sentence <- str_to_title(paste0(chart_types[1], "."))
+        sentence <- tools::toTitleCase(paste0(chart_types[1], "."))
     } else {
         sentence <- paste0(
             "Combined chart with ",
