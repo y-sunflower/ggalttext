@@ -1,1 +1,12 @@
+.DS_Store
+*cache*
 .Rproj.user
+docs
+*.typ
+sandbox/
+inst/doc
+*.sh
+*.pdf
+*.tar.gz
+!vignettes/example.pdf
+.vscode/
