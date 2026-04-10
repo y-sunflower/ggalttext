@@ -1,4 +1,6 @@
 library(ggplot2)
+library(dplyr)
+library(babynames)
 
 test_that("single-geom chart description starts with chart type", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
@@ -39,20 +41,41 @@ test_that("title subtitle and caption are included when present", {
         )
 
     text <- generate_alt_text(p)
-    expect_match(text, "Title: Fuel efficiency by weight\\.")
-    expect_match(text, "Subtitle: Each point is one car\\.")
-    expect_match(text, "Caption: Source: mtcars\\.")
+    expect_equal(
+        text,
+        "Scatter Plot. Title: 'Fuel efficiency by weight'. Subtitle: 'Each point is one car'. Caption: 'Source: mtcars'."
+    )
 })
 
-test_that("text no longer includes trend min max or mapping names", {
-    p <- ggplot(mtcars, aes(wt, mpg)) +
-        geom_point()
+test_that("Complex grid with title", {
+    p <- babynames |>
+        filter(
+            name %in%
+                c(
+                    "Amanda",
+                    "Jessica",
+                    "Patricia",
+                    "Deborah",
+                    "Dorothy",
+                    "Helen"
+                )
+        ) |>
+        filter(sex == "F") |>
+        ggplot(aes(x = year, y = n, group = name, fill = name)) +
+        geom_area() +
+        theme(legend.position = "none") +
+        ggtitle("Popularity of American names in the previous 30 years") +
+        theme(
+            legend.position = "none",
+            panel.spacing = unit(0.1, "lines"),
+            strip.text.x = element_text(size = 8)
+        ) +
+        facet_wrap(~name, scale = "free_y")
 
     text <- generate_alt_text(p)
-    expect_no_match(text, "Overall,")
-    expect_no_match(text, "lowest value")
-    expect_no_match(text, "highest")
-    expect_no_match(text, "Values range")
-    expect_no_match(text, "\\bwt\\b")
-    expect_no_match(text, "\\bmpg\\b")
+
+    expect_equal(
+        text,
+        "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title: 'Popularity of American names in the previous 30 years'."
+    )
 })
