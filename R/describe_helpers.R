@@ -70,6 +70,7 @@ describe_plot_labels_sentences <- function(p) {
     pieces[nzchar(pieces)]
 }
 
+#' @keywords internal
 label_sentence <- function(value, label_name) {
     if (is.null(value)) {
         return("")
@@ -83,6 +84,7 @@ label_sentence <- function(value, label_name) {
     paste0(label_name, ": '", value, "'.")
 }
 
+#' @keywords internal
 geom_class_to_chart_type <- function(geom_class) {
     switch(
         geom_class,
@@ -109,6 +111,7 @@ geom_class_to_chart_type <- function(geom_class) {
     )
 }
 
+#' @keywords internal
 join_with_and <- function(items) {
     items <- items[nzchar(items)]
     n <- length(items)
