@@ -38,11 +38,11 @@ plot <- ggplot(babynames, aes(x = year, y = n, group = name, fill = name)) +
     facet_wrap(~name, scale = "free_y")
 ```
 
-![Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title: 'Popularity of American names in the previous 30 years'.](./example.png)
+![Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title is 'Popularity of American names in the previous 30 years'.](./example.png)
 
 ```r
 generate_alt_text(plot)
 #> "Area Chart. The data is split into 6 small charts arranged
-# in a 2 row(s) by 3 col(s) grid. Title: 'Popularity of American
+# in a 2 row(s) by 3 col(s) grid. Title is 'Popularity of American
 # names in the previous 30 years'."
 ```

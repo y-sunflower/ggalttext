@@ -43,7 +43,7 @@ test_that("title subtitle and caption are included when present", {
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Scatter Plot. Title: 'Fuel efficiency by weight'. Subtitle: 'Each point is one car'. Caption: 'Source: mtcars'."
+        "Scatter Plot. Title is 'Fuel efficiency by weight'. Subtitle is 'Each point is one car'. Caption is 'Source: mtcars'."
     )
 })
 
@@ -76,6 +76,6 @@ test_that("Complex grid with title", {
 
     expect_equal(
         text,
-        "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title: 'Popularity of American names in the previous 30 years'."
+        "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title is 'Popularity of American names in the previous 30 years'."
     )
 })

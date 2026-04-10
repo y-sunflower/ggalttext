@@ -81,7 +81,7 @@ label_sentence <- function(value, label_name) {
         return("")
     }
 
-    paste0(label_name, ": '", value, "'.")
+    paste0(label_name, " is '", value, "'.")
 }
 
 #' @keywords internal
