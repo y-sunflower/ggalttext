@@ -29,15 +29,6 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install Windows GNU Rust target
-        if: runner.os == 'Windows'
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: x86_64-pc-windows-gnu
-
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -45,5 +36,6 @@ jobs:
 
       - name: Run unit tests
         run: |
+          devtools::install()
           testthat::test_dir("tests/testthat", stop_on_failure = TRUE)
         shell: Rscript {0}
