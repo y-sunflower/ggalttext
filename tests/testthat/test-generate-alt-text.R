@@ -1,6 +1,7 @@
 library(ggplot2)
 library(dplyr)
 library(babynames)
+library(waffle)
 
 test_that("single-geom chart description starts with chart type", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
@@ -99,7 +100,7 @@ test_that("waffle geoms are recognised and discrete fill categories described", 
     )
 
     p <- ggplot(d, aes(fill = source, values = value)) +
-        waffle::geom_waffle(n_rows = 5) +
+        geom_waffle(n_rows = 5) +
         scale_fill_manual(
             values = c(
                 Coal = "#111111",
