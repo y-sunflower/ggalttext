@@ -15,5 +15,6 @@ Suggests:
     dplyr,
     patchwork,
     testthat (>= 3.0.0),
-    waffle
+Remotes:
+    hrbrmstr/waffle
 Config/testthat/edition: 3
