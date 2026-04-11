@@ -79,3 +79,39 @@ test_that("Complex grid with title", {
         "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title is 'Popularity of American names in the previous 30 years'."
     )
 })
+
+test_that("from = auto uses built-in alt text when available", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(alt = "Built-in alt text.")
+
+    text <- generate_alt_text(p, from = "auto")
+    expect_equal(text, "Built-in alt text.")
+})
+
+test_that("from = auto falls back to ggalt when built-in alt text is missing", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(alt = NA)
+
+    text <- generate_alt_text(p, from = "auto")
+    expect_equal(text, "Scatter Plot.")
+})
+
+test_that("from = origin returns ggplot2 origin alt text as-is", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(alt = NA)
+
+    text <- generate_alt_text(p, from = "origin")
+    expect_true(is.na(text))
+})
+
+test_that("invalid ggplot object error formats class names", {
+    obj <- structure(list(), class = c("foo", "bar"))
+
+    expect_error(
+        generate_alt_text(obj),
+        "Object is not a valid ggplot2 object: 'foo, bar'\\."
+    )
+})

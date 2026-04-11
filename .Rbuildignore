@@ -1,4 +1,4 @@
-^r2typ\.Rproj$
+^ggalt\.Rproj$
 ^\.DS_Store$
 ^\.Rproj\.user$
 ^\.pre-commit-config\.yaml$
@@ -19,7 +19,7 @@ dev.R
 ^vignettes/\.quarto$
 ^vignettes/*_files$
 ^dev/*
-^r2typ_
+^ggalt_
 ^data_internals/
 ^\.github$
 ^doc$
