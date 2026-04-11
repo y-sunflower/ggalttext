@@ -13,8 +13,7 @@ This text is **not** intended to describe the plot word for word, nor how it was
 ## Installation
 
 ```r
-#install.packages("pak")
-pak::pak("y-sunflower/ggalt")
+install.packages("ggalt", repos = c("https://y-sunflower.r-universe.dev"))
 ```
 
 <br>
