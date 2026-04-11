@@ -37,7 +37,7 @@ library(ggalt)
 plot <- ggplot(babynames, aes(x = year, y = n, group = name, fill = name)) +
     geom_area() +
     theme(legend.position = "none") +
-    ggtitle("Popularity of American names in the previous 30 years") +
+    labs(title = "Popularity of American names in the previous 30 years") +
     theme(
         legend.position = "none",
         panel.spacing = unit(0.1, "lines"),
@@ -68,3 +68,14 @@ generate_alt_text(plot, from = "origin")
 - `"default"`: always generate alt text with `ggalt`.
 - `"auto"`: use existing alt text when it is non-empty; otherwise generate alt text with `ggalt`.
 - `"origin"`: always return `ggplot2::get_alt_text(p)` as-is. In that case you may not need `ggalt`.
+
+<br>
+
+## How to make accessible visualizations?
+
+`ggalt` will generate high-quality alternative text, provided your chart design follows accessibility guidelines:
+
+- A title is a title, not just text in large font: always use `labs()` to add a title or subtitle.
+- Use color palettes suitable for people with color blindness. See [colorblindr](https://github.com/clauswilke/colorblindr).
+- Use high color contrast: if the background color is light, the text should be dark.
+- For complex graphics, write the alternative text yourself, as automated tools such as `ggalt` may not be accurate.
