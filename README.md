@@ -79,3 +79,9 @@ generate_alt_text(plot, from = "origin")
 - Use color palettes suitable for people with color blindness. See [colorblindr](https://github.com/clauswilke/colorblindr).
 - Use high color contrast: if the background color is light, the text should be dark.
 - For complex graphics, write the alternative text yourself, as automated tools such as `ggalt` may not be accurate.
+
+<br>
+
+## Coding with AI?
+
+If you're coding with AI, this page is pretty much all they need to know! Just copy everything above this section and send it to your favorite AI/LLM.
