@@ -27,7 +27,7 @@ test_that("multi-panel layout is described in plain language", {
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Scatter Plot. The data is split into 3 small charts arranged in a 1 row(s) by 3 col(s) grid."
+        "Scatter Plot. The data is split into 3 small charts arranged in a 1 row(s) by 3 col(s) grid. Facets by cyl are '4', '6', and '8'."
     )
 })
 
@@ -76,8 +76,61 @@ test_that("Complex grid with title", {
 
     expect_equal(
         text,
-        "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Title is 'Popularity of American names in the previous 30 years'."
+        "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Facets by name are 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica', and 'Patricia'. Title is 'Popularity of American names in the previous 30 years'."
     )
+})
+
+test_that("html labels are normalized into plain text", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(subtitle = "A<br><strong>bold</strong> move &amp; check")
+
+    text <- generate_alt_text(p)
+    expect_equal(
+        text,
+        "Scatter Plot. Subtitle is 'A bold move & check'."
+    )
+})
+
+test_that("waffle geoms are recognised and discrete fill categories described", {
+    d <- data.frame(
+        source = c("Coal", "Oil", "Gas"),
+        value = c(50, 30, 20)
+    )
+
+    p <- ggplot(d, aes(fill = source, values = value)) +
+        waffle::geom_waffle(n_rows = 5) +
+        scale_fill_manual(
+            values = c(
+                Coal = "#111111",
+                Oil = "#222222",
+                Gas = "#333333"
+            ),
+            name = "Energy Source"
+        )
+
+    text <- generate_alt_text(p)
+    expect_equal(
+        text,
+        "Waffle Chart. Fill categories ('Energy Source') run from 'Coal', 'Gas', and 'Oil'."
+    )
+})
+
+test_that("patchwork inset does not replace the primary chart description", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        patchwork::inset_element(
+            ggplot() +
+                ggtext::geom_richtext(aes(x = 0.5, y = 0.5, label = "note")),
+            left = 0,
+            right = 1,
+            bottom = 0,
+            top = 1,
+            align_to = "full"
+        )
+
+    text <- generate_alt_text(p)
+    expect_equal(text, "Scatter Plot.")
 })
 
 test_that("from = auto uses built-in alt text when available", {

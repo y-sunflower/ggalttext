@@ -20,8 +20,7 @@
 #'     - `"default"`: always generate alt text with `ggalt`.
 #'     - `"auto"`: use existing alt text when it is non-empty; otherwise generate
 #'       alt text with `ggalt`.
-#'     - `"origin"`: always return `ggplot2::get_alt_text(p)` as-is. In that case,
-#'       you may not need `ggalt`.
+#'     - `"origin"`: always return `ggplot2::get_alt_text(p)` as-is.
 #'
 #' @return A string
 #'
@@ -48,13 +47,35 @@ generate_alt_text <- function(p, from = c("default", "auto", "origin")) {
         return(ggplot2::get_alt_text(p))
     }
 
-    b <- ggplot2::ggplot_build(p)
+    p_main <- resolve_plot_for_alt(p)
+    b <- ggplot2::ggplot_build(p_main)
 
     pieces <- c(
-        describe_chart_type_sentence(p),
+        describe_chart_type_sentence(p_main),
         describe_panel_layout_sentence(b),
-        describe_plot_labels_sentences(p)
+        describe_facet_values_sentence(b),
+        describe_discrete_scales_sentence(b),
+        describe_plot_labels_sentences(p_main)
     )
 
     paste(pieces[nzchar(pieces)], collapse = " ")
+}
+
+#' @keywords internal
+resolve_plot_for_alt <- function(p) {
+    if (!inherits(p, "patchwork")) {
+        return(p)
+    }
+
+    plots <- p$patches$plots
+    if (!length(plots)) {
+        return(p)
+    }
+
+    candidate <- plots[[1]]
+    if (!inherits(candidate, "ggplot")) {
+        return(p)
+    }
+
+    resolve_plot_for_alt(candidate)
 }

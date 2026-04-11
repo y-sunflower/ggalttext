@@ -13,5 +13,7 @@ Imports:
 Suggests: 
     babynames,
     dplyr,
-    testthat (>= 3.0.0)
+    patchwork,
+    testthat (>= 3.0.0),
+    waffle
 Config/testthat/edition: 3
