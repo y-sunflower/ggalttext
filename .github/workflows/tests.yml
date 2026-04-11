@@ -36,6 +36,6 @@ jobs:
 
       - name: Run unit tests
         run: |
-          devtools::install()
+          devtools::install(dependencies = TRUE)
           devtools::test(stop_on_failure = TRUE)
         shell: Rscript {0}
