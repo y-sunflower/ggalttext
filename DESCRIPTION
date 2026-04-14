@@ -1,4 +1,4 @@
-Package: ggalt
+Package: ggalttext
 Title: Make 'ggplot2' Fully Accessible by Generating Alternative Text
 Version: 0.1.0
 Authors@R: 

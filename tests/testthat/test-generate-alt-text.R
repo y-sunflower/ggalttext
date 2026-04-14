@@ -143,7 +143,7 @@ test_that("from = auto uses built-in alt text when available", {
     expect_equal(text, "Built-in alt text.")
 })
 
-test_that("from = auto falls back to ggalt when built-in alt text is missing", {
+test_that("from = auto falls back to ggalttext when built-in alt text is missing", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
         labs(alt = NA)
