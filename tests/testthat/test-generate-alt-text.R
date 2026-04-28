@@ -48,6 +48,45 @@ test_that("title subtitle and caption are included when present", {
     )
 })
 
+test_that("lang controls generated French text", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        facet_wrap(~cyl) +
+        labs(title = "Fuel efficiency")
+
+    text <- generate_alt_text(p, lang = "fr")
+    expect_equal(
+        text,
+        paste(
+            "Nuage de points.",
+            paste0(
+                "Les donnees sont reparties en 3 petits graphiques organises ",
+                "dans une grille de 1 ligne(s) par 3 colonne(s)."
+            ),
+            "Les facettes par cyl sont '4', '6' et '8'.",
+            "Le titre est 'Fuel efficiency'."
+        )
+    )
+})
+
+test_that("lang controls generated German text", {
+    p <- ggplot(mtcars, aes(factor(cyl), fill = factor(cyl))) +
+        geom_bar() +
+        scale_fill_discrete(name = "Cylinders")
+
+    text <- generate_alt_text(p, lang = "de")
+    expect_equal(
+        text,
+        paste(
+            "Balkendiagramm.",
+            paste0(
+                "Kategorien fuer Fuellung ('Cylinders') reichen von ",
+                "'4', '6' und '8'."
+            )
+        )
+    )
+})
+
 test_that("Complex grid with title", {
     p <- babynames |>
         filter(
@@ -167,5 +206,15 @@ test_that("invalid ggplot object error formats class names", {
     expect_error(
         generate_alt_text(obj),
         "Object is not a valid ggplot2 object: 'foo, bar'\\."
+    )
+})
+
+test_that("unsupported language errors clearly", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point()
+
+    expect_error(
+        generate_alt_text(p, lang = "es"),
+        "should be one of"
     )
 })

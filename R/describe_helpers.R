@@ -1,30 +1,36 @@
 #' @keywords internal
-describe_chart_type_sentence <- function(p) {
+describe_chart_type_sentence <- function(p, lang = "en") {
     geom_classes <- vapply(
         p$layers,
         function(layer) class(layer$geom)[1],
         character(1)
     )
     geom_classes <- unique(geom_classes[nzchar(geom_classes)])
-    chart_types <- unique(vapply(
+    chart_type_keys <- unique(vapply(
         geom_classes,
-        geom_class_to_chart_type,
+        geom_class_to_chart_type_key,
         character(1)
     ))
-    chart_types <- chart_types[nzchar(chart_types)]
-    if (length(chart_types) > 1 && "annotated chart" %in% chart_types) {
-        chart_types <- setdiff(chart_types, "annotated chart")
+    chart_type_keys <- chart_type_keys[nzchar(chart_type_keys)]
+    if (length(chart_type_keys) > 1 && "annotated_chart" %in% chart_type_keys) {
+        chart_type_keys <- setdiff(chart_type_keys, "annotated_chart")
     }
 
-    if (!length(chart_types)) {
-        sentence <- "Chart, without more information."
-    } else if (length(chart_types) == 1) {
-        sentence <- tools::toTitleCase(paste0(chart_types[1], "."))
-    } else {
+    spec <- language_spec(lang)
+
+    if (!length(chart_type_keys)) {
+        sentence <- spec$chart_unknown
+    } else if (length(chart_type_keys) == 1) {
+        chart_type <- language_lookup(lang, "chart_types", chart_type_keys[1])
         sentence <- paste0(
-            "Combined chart with ",
-            join_with_and(chart_types),
+            apply_language_case(chart_type, spec$single_chart_case),
             "."
+        )
+    } else {
+        chart_types <- language_lookup(lang, "chart_types", chart_type_keys)
+        sentence <- render_language_template(
+            spec$chart_combined,
+            list(types = join_language_items(chart_types, lang))
         )
     }
 
@@ -32,7 +38,7 @@ describe_chart_type_sentence <- function(p) {
 }
 
 #' @keywords internal
-describe_panel_layout_sentence <- function(build) {
+describe_panel_layout_sentence <- function(build, lang = "en") {
     layout <- build$layout$layout
     if (is.null(layout) || !nrow(layout) || !"PANEL" %in% names(layout)) {
         return("")
@@ -43,27 +49,26 @@ describe_panel_layout_sentence <- function(build) {
         return("")
     }
 
+    spec <- language_spec(lang)
     has_grid <- all(c("ROW", "COL") %in% names(layout))
     if (!has_grid) {
-        return(paste0("The data is shown in ", panel_count, " small charts."))
+        return(render_language_template(
+            spec$panel_simple,
+            list(panel_count = panel_count)
+        ))
     }
 
     n_rows <- max(layout$ROW, na.rm = TRUE)
     n_cols <- max(layout$COL, na.rm = TRUE)
 
-    paste0(
-        "The data is split into ",
-        panel_count,
-        " small charts arranged in a ",
-        n_rows,
-        " row(s) by ",
-        n_cols,
-        " col(s) grid."
+    render_language_template(
+        spec$panel_grid,
+        list(panel_count = panel_count, n_rows = n_rows, n_cols = n_cols)
     )
 }
 
 #' @keywords internal
-describe_facet_values_sentence <- function(build) {
+describe_facet_values_sentence <- function(build, lang = "en") {
     layout <- build$layout$layout
     if (is.null(layout) || !nrow(layout) || !"PANEL" %in% names(layout)) {
         return("")
@@ -77,6 +82,7 @@ describe_facet_values_sentence <- function(build) {
 
     pieces <- character()
     panel_order <- order(layout$PANEL)
+    spec <- language_spec(lang)
 
     for (facet_var in facet_vars) {
         vals <- as.character(layout[[facet_var]][panel_order])
@@ -89,24 +95,22 @@ describe_facet_values_sentence <- function(build) {
 
         facet_name <- gsub("_", " ", facet_var, fixed = TRUE)
         if (n_vals <= 8) {
-            sentence <- paste0(
-                "Facets by ",
-                facet_name,
-                " are ",
-                join_with_and(paste0("'", vals, "'")),
-                "."
+            sentence <- render_language_template(
+                spec$facet_values,
+                list(
+                    facet_name = facet_name,
+                    values = join_language_items(quote_values(vals), lang)
+                )
             )
         } else {
-            sentence <- paste0(
-                "Facets by ",
-                facet_name,
-                " span ",
-                n_vals,
-                " values from '",
-                vals[1],
-                "' to '",
-                vals[n_vals],
-                "'."
+            sentence <- render_language_template(
+                spec$facet_span,
+                list(
+                    facet_name = facet_name,
+                    n_vals = n_vals,
+                    first_value = vals[1],
+                    last_value = vals[n_vals]
+                )
             )
         }
         pieces <- c(pieces, sentence)
@@ -116,7 +120,7 @@ describe_facet_values_sentence <- function(build) {
 }
 
 #' @keywords internal
-describe_discrete_scales_sentence <- function(build) {
+describe_discrete_scales_sentence <- function(build, lang = "en") {
     scales <- build$plot$scales$scales
     if (!length(scales)) {
         return("")
@@ -124,6 +128,7 @@ describe_discrete_scales_sentence <- function(build) {
 
     pieces <- character()
     described <- character()
+    spec <- language_spec(lang)
 
     for (scale in scales) {
         aes <- scale$aesthetics
@@ -139,7 +144,7 @@ describe_discrete_scales_sentence <- function(build) {
             next
         }
 
-        aes_key <- aes_key[1]
+        aes_key <- aesthetic_key(aes_key[1])
         if (aes_key %in% described) {
             next
         }
@@ -158,35 +163,29 @@ describe_discrete_scales_sentence <- function(build) {
         title <- normalize_label_text(title)
 
         if (length(limits) <= 6) {
-            levels_txt <- join_with_and(paste0("'", limits, "'"))
+            levels_txt <- join_language_items(quote_values(limits), lang)
         } else {
-            levels_txt <- paste0(
-                "'",
-                limits[1],
-                "' to '",
-                limits[length(limits)],
-                "' (",
-                length(limits),
-                " categories)"
+            levels_txt <- render_language_template(
+                spec$scale_span,
+                list(
+                    first_value = limits[1],
+                    last_value = limits[length(limits)],
+                    n_vals = length(limits)
+                )
             )
         }
 
-        aes_label <- aesthetic_label(aes_key)
+        aes_label <- aesthetic_label(aes_key, lang = lang)
+        aes_label <- apply_language_case(aes_label, spec$aesthetic_case)
         if (nzchar(title)) {
-            sentence <- paste0(
-                tools::toTitleCase(aes_label),
-                " categories ('",
-                title,
-                "') run from ",
-                levels_txt,
-                "."
+            sentence <- render_language_template(
+                spec$scale_with_title,
+                list(aesthetic = aes_label, title = title, levels = levels_txt)
             )
         } else {
-            sentence <- paste0(
-                tools::toTitleCase(aes_label),
-                " categories run from ",
-                levels_txt,
-                "."
+            sentence <- render_language_template(
+                spec$scale_without_title,
+                list(aesthetic = aes_label, levels = levels_txt)
             )
         }
 
@@ -198,18 +197,18 @@ describe_discrete_scales_sentence <- function(build) {
 }
 
 #' @keywords internal
-describe_plot_labels_sentences <- function(p) {
+describe_plot_labels_sentences <- function(p, lang = "en") {
     labels <- p$labels
     pieces <- c(
-        label_sentence(labels$title, "Title"),
-        label_sentence(labels$subtitle, "Subtitle"),
-        label_sentence(labels$caption, "Caption")
+        label_sentence(labels$title, "title", lang = lang),
+        label_sentence(labels$subtitle, "subtitle", lang = lang),
+        label_sentence(labels$caption, "caption", lang = lang)
     )
     pieces[nzchar(pieces)]
 }
 
 #' @keywords internal
-label_sentence <- function(value, label_name) {
+label_sentence <- function(value, label_name, lang = "en") {
     if (is.null(value)) {
         return("")
     }
@@ -219,7 +218,14 @@ label_sentence <- function(value, label_name) {
         return("")
     }
 
-    paste0(label_name, " is '", value, "'.")
+    spec <- language_spec(lang)
+    render_language_template(
+        spec$label,
+        list(
+            label = language_lookup(lang, "labels", label_name),
+            value = value
+        )
+    )
 }
 
 #' @keywords internal
@@ -251,62 +257,49 @@ normalize_label_text <- function(value) {
 }
 
 #' @keywords internal
-geom_class_to_chart_type <- function(geom_class) {
+geom_class_to_chart_type_key <- function(geom_class) {
     switch(
         geom_class,
-        GeomPoint = "scatter plot",
-        GeomLine = "line chart",
-        GeomPath = "line chart",
-        GeomStep = "step chart",
-        GeomBar = "bar chart",
-        GeomCol = "bar chart",
-        GeomArea = "area chart",
+        GeomPoint = "scatter_plot",
+        GeomLine = "line_chart",
+        GeomPath = "line_chart",
+        GeomStep = "step_chart",
+        GeomBar = "bar_chart",
+        GeomCol = "bar_chart",
+        GeomArea = "area_chart",
         GeomHistogram = "histogram",
-        GeomDensity = "density plot",
-        GeomBoxplot = "box plot",
-        GeomViolin = "violin plot",
+        GeomDensity = "density_plot",
+        GeomBoxplot = "box_plot",
+        GeomViolin = "violin_plot",
         GeomTile = "heatmap",
         GeomRaster = "heatmap",
-        GeomSmooth = "smoothed line chart",
-        GeomRibbon = "band chart",
-        GeomSegment = "segment chart",
-        GeomText = "annotated chart",
-        GeomLabel = "annotated chart",
-        GeomRichText = "annotated chart",
-        GeomCurve = "annotated chart",
-        GeomWaffle = "waffle chart",
+        GeomSmooth = "smoothed_line_chart",
+        GeomRibbon = "band_chart",
+        GeomSegment = "segment_chart",
+        GeomText = "annotated_chart",
+        GeomLabel = "annotated_chart",
+        GeomRichText = "annotated_chart",
+        GeomCurve = "annotated_chart",
+        GeomWaffle = "waffle_chart",
         GeomSf = "map",
         "chart"
     )
 }
 
 #' @keywords internal
-aesthetic_label <- function(aesthetic) {
+aesthetic_key <- function(aesthetic) {
     switch(
         aesthetic,
         fill = "fill",
         colour = "color",
         color = "color",
-        linetype = "line type",
+        linetype = "line_type",
         shape = "shape",
         aesthetic
     )
 }
 
 #' @keywords internal
-join_with_and <- function(items) {
-    items <- items[nzchar(items)]
-    n <- length(items)
-
-    if (n == 0) {
-        return("")
-    }
-    if (n == 1) {
-        return(items[1])
-    }
-    if (n == 2) {
-        return(paste(items, collapse = " and "))
-    }
-
-    paste0(paste(items[1:(n - 1)], collapse = ", "), ", and ", items[n])
+aesthetic_label <- function(aesthetic, lang = "en") {
+    language_lookup(lang, "aesthetics", aesthetic_key(aesthetic))
 }
