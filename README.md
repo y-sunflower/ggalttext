@@ -1,12 +1,13 @@
 # ggalttext
 
-Make ggplot2 fully accessible by generating alternative text. `ggalttext` provides a single function, `generate_alt_text()`, which takes any ggplot2 object and generates a string describing the graph's content.
+Make ggplot2 fully accessible by generating alternative text. `ggalttext` provides a single function, `generate_alt_text()`, which takes any ggplot2 object and generates a string describing the graph's content (**in multiple languages!**).
 
 This text is **not** intended to describe the plot word for word, nor how it was created. Rather, it aims to be concise and provide an overview of the plot's content, for example:
 
 - the kind of chart(s)
 - the number of chart(s) for facets
 - the title, subtitle and caption
+- and more!
 
 <br>
 
@@ -78,6 +79,9 @@ generate_alt_text(plot, lang = "de")
 # 'Dorothy', 'Helen', 'Jessica' und 'Patricia'. Titel ist 'Popularity of American
 # names in the previous 30 years'."
 ```
+
+> [!TIP]
+> If you would like to see another language available here, please [open an issue](https://github.com/y-sunflower/ggalttext/issues)!
 
 ### Flexibility
 
