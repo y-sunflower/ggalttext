@@ -21,11 +21,17 @@
 #'     - `"auto"`: use existing alt text when it is non-empty; otherwise generate
 #'       alt text with `ggalttext`.
 #'     - `"origin"`: always return `ggplot2::get_alt_text(p)` as-is.
+#' @param lang Language used for generated text. Defaults to `"en"` (English).
+#'     Supported values are `"en"`, `"fr"` (French), and `"de"` (German).
 #'
 #' @return A string
 #'
 #' @export
-generate_alt_text <- function(p, from = c("default", "auto", "origin")) {
+generate_alt_text <- function(
+    p,
+    from = c("default", "auto", "origin"),
+    lang = "en"
+) {
     if (!inherits(p, "ggplot")) {
         cls <- paste(class(p), collapse = ", ")
         stop(
@@ -37,6 +43,7 @@ generate_alt_text <- function(p, from = c("default", "auto", "origin")) {
     }
 
     from <- match.arg(from)
+    lang <- match_language(lang)
 
     if (from == "auto") {
         origin_alt_text <- ggplot2::get_alt_text(p)
@@ -51,11 +58,11 @@ generate_alt_text <- function(p, from = c("default", "auto", "origin")) {
     b <- ggplot2::ggplot_build(p_main)
 
     pieces <- c(
-        describe_chart_type_sentence(p_main),
-        describe_panel_layout_sentence(b),
-        describe_facet_values_sentence(b),
-        describe_discrete_scales_sentence(b),
-        describe_plot_labels_sentences(p_main)
+        describe_chart_type_sentence(p_main, lang = lang),
+        describe_panel_layout_sentence(b, lang = lang),
+        describe_facet_values_sentence(b, lang = lang),
+        describe_discrete_scales_sentence(b, lang = lang),
+        describe_plot_labels_sentences(p_main, lang = lang)
     )
 
     paste(pieces[nzchar(pieces)], collapse = " ")

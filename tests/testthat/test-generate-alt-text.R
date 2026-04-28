@@ -32,7 +32,7 @@ test_that("multi-panel layout is described in plain language", {
     )
 })
 
-test_that("title subtitle and caption are included when present", {
+test_that("title subtitle and caption are included when present and in the right order", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
         labs(
@@ -45,6 +45,45 @@ test_that("title subtitle and caption are included when present", {
     expect_equal(
         text,
         "Scatter Plot. Title is 'Fuel efficiency by weight'. Subtitle is 'Each point is one car'. Caption is 'Source: mtcars'."
+    )
+})
+
+test_that("lang controls generated French text", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        facet_wrap(~cyl) +
+        labs(title = "Fuel efficiency")
+
+    text <- generate_alt_text(p, lang = "fr")
+    expect_equal(
+        text,
+        paste(
+            "Nuage de points.",
+            paste0(
+                "Les donnees sont reparties en 3 petits graphiques organises ",
+                "dans une grille de 1 ligne(s) par 3 colonne(s)."
+            ),
+            "Les facettes par cyl sont '4', '6' et '8'.",
+            "Le titre est 'Fuel efficiency'."
+        )
+    )
+})
+
+test_that("lang controls generated German text", {
+    p <- ggplot(mtcars, aes(factor(cyl), fill = factor(cyl))) +
+        geom_bar() +
+        scale_fill_discrete(name = "Cylinders")
+
+    text <- generate_alt_text(p, lang = "de")
+    expect_equal(
+        text,
+        paste(
+            "Balkendiagramm.",
+            paste0(
+                "Kategorien fuer Fuellung ('Cylinders') reichen von ",
+                "'4', '6' und '8'."
+            )
+        )
     )
 })
 
@@ -74,10 +113,21 @@ test_that("Complex grid with title", {
         facet_wrap(~name, scale = "free_y")
 
     text <- generate_alt_text(p)
-
     expect_equal(
         text,
         "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Facets by name are 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica', and 'Patricia'. Title is 'Popularity of American names in the previous 30 years'."
+    )
+
+    text <- generate_alt_text(p, lang = "fr")
+    expect_equal(
+        text,
+        "Graphique en aires. Les donnees sont reparties en 6 petits graphiques organises dans une grille de 2 ligne(s) par 3 colonne(s). Les facettes par name sont 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica' et 'Patricia'. Le titre est 'Popularity of American names in the previous 30 years'."
+    )
+
+    text <- generate_alt_text(p, lang = "de")
+    expect_equal(
+        text,
+        "Flaechendiagramm. Die Daten sind auf 6 kleine Diagramme in einem Raster mit 2 Zeile(n) und 3 Spalte(n) aufgeteilt. Facetten nach name sind 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica' und 'Patricia'. Titel ist 'Popularity of American names in the previous 30 years'."
     )
 })
 
@@ -87,17 +137,11 @@ test_that("html labels are normalized into plain text", {
         labs(subtitle = "A<br><strong>bold</strong> move &amp; check")
 
     text <- generate_alt_text(p)
-    expect_equal(
-        text,
-        "Scatter Plot. Subtitle is 'A bold move & check'."
-    )
+    expect_equal(text, "Scatter Plot. Subtitle is 'A bold move & check'.")
 })
 
 test_that("waffle geoms are recognised and discrete fill categories described", {
-    d <- data.frame(
-        source = c("Coal", "Oil", "Gas"),
-        value = c(50, 30, 20)
-    )
+    d <- data.frame(source = c("Coal", "Oil", "Gas"), value = c(50, 30, 20))
 
     p <- ggplot(d, aes(fill = source, values = value)) +
         geom_waffle(n_rows = 5) +
@@ -145,8 +189,7 @@ test_that("from = auto uses built-in alt text when available", {
 
 test_that("from = auto falls back to ggalttext when built-in alt text is missing", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
-        geom_point() +
-        labs(alt = NA)
+        geom_point()
 
     text <- generate_alt_text(p, from = "auto")
     expect_equal(text, "Scatter Plot.")
@@ -167,5 +210,15 @@ test_that("invalid ggplot object error formats class names", {
     expect_error(
         generate_alt_text(obj),
         "Object is not a valid ggplot2 object: 'foo, bar'\\."
+    )
+})
+
+test_that("unsupported language errors clearly", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point()
+
+    expect_error(
+        generate_alt_text(p, lang = "es"),
+        "should be one of"
     )
 })
