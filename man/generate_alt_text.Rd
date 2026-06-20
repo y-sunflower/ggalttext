@@ -9,7 +9,9 @@ generate_alt_text(
   ...,
   from = c("default", "auto", "origin"),
   lang = "en",
-  include_title = TRUE
+  include_title = TRUE,
+  include_subtitle = TRUE,
+  include_caption = TRUE
 )
 }
 \arguments{
@@ -30,6 +32,12 @@ Supported values are \code{"en"}, \code{"fr"} (French), and \code{"de"} (German)
 
 \item{include_title}{Whether to include the title of the plot, if any, in the
 alternative text.}
+
+\item{include_subtitle}{Whether to include the subtitle of the plot, if any,
+in the alternative text.}
+
+\item{include_caption}{Whether to include the caption of the plot, if any, in
+the alternative text.}
 }
 \value{
 A string

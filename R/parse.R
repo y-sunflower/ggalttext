@@ -25,7 +25,11 @@
 #' @param lang Language used for generated text. Defaults to `"en"` (English).
 #'     Supported values are `"en"`, `"fr"` (French), and `"de"` (German).
 #' @param include_title Whether to include the title of the plot, if any, in the
-#'     alternative text.
+#'     alternative text. This is mostly useful to reduce the length of the text.
+#' @param include_subtitle Whether to include the subtitle of the plot, if any,
+#'     in the alternative text. This is mostly useful to reduce the length of the text.
+#' @param include_caption Whether to include the caption of the plot, if any, in
+#'     the alternative text. This is mostly useful to reduce the length of the text.
 #'
 #' @return A string
 #'
@@ -35,7 +39,9 @@ generate_alt_text <- function(
     ...,
     from = c("default", "auto", "origin"),
     lang = "en",
-    include_title = TRUE
+    include_title = TRUE,
+    include_subtitle = TRUE,
+    include_caption = TRUE
 ) {
     if (!inherits(p, "ggplot")) {
         cls <- paste(class(p), collapse = ", ")
@@ -74,7 +80,9 @@ generate_alt_text <- function(
         describe_plot_labels_sentences(
             p_main,
             lang = lang,
-            include_title = include_title
+            include_title = include_title,
+            include_subtitle = include_subtitle,
+            include_caption = include_caption
         )
     )
 
