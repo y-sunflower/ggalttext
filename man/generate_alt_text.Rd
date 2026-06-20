@@ -4,10 +4,18 @@
 \alias{generate_alt_text}
 \title{Generate alternative text from a ggplot2 object}
 \usage{
-generate_alt_text(p, from = c("default", "auto", "origin"), lang = "en")
+generate_alt_text(
+  p,
+  ...,
+  from = c("default", "auto", "origin"),
+  lang = "en",
+  include_title = TRUE
+)
 }
 \arguments{
 \item{p}{A \code{ggplot} object.}
+
+\item{...}{Ignored.}
 
 \item{from}{Method used to select alt text. Since ggplot2 objects can
 include built-in alt text (via \code{labs(alt = "Here goes the text")}),
@@ -19,6 +27,9 @@ alt text with \code{ggalttext}.
 
 \item{lang}{Language used for generated text. Defaults to \code{"en"} (English).
 Supported values are \code{"en"}, \code{"fr"} (French), and \code{"de"} (German).}
+
+\item{include_title}{Whether to include the title of the plot, if any, in the
+alternative text.}
 }
 \value{
 A string

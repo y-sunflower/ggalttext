@@ -24,6 +24,8 @@
 #'     - `"origin"`: always return `ggplot2::get_alt_text(p)` as-is.
 #' @param lang Language used for generated text. Defaults to `"en"` (English).
 #'     Supported values are `"en"`, `"fr"` (French), and `"de"` (German).
+#' @param include_title Whether to include the title of the plot, if any, in the
+#'     alternative text.
 #'
 #' @return A string
 #'
@@ -32,7 +34,8 @@ generate_alt_text <- function(
     p,
     ...,
     from = c("default", "auto", "origin"),
-    lang = "en"
+    lang = "en",
+    include_title = TRUE
 ) {
     if (!inherits(p, "ggplot")) {
         cls <- paste(class(p), collapse = ", ")
@@ -68,7 +71,11 @@ generate_alt_text <- function(
         describe_panel_layout_sentence(b, lang = lang),
         describe_facet_values_sentence(b, lang = lang),
         describe_discrete_scales_sentence(b, lang = lang),
-        describe_plot_labels_sentences(p_main, lang = lang)
+        describe_plot_labels_sentences(
+            p_main,
+            lang = lang,
+            include_title = include_title
+        )
     )
 
     paste(pieces[nzchar(pieces)], collapse = " ")

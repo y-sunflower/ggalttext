@@ -197,10 +197,14 @@ describe_discrete_scales_sentence <- function(build, lang = "en") {
 }
 
 #' @keywords internal
-describe_plot_labels_sentences <- function(p, lang = "en") {
+describe_plot_labels_sentences <- function(
+    p,
+    lang = "en",
+    include_title = TRUE
+) {
     labels <- p$labels
     pieces <- c(
-        label_sentence(labels$title, "title", lang = lang),
+        if (include_title) label_sentence(labels$title, "title", lang = lang),
         label_sentence(labels$subtitle, "subtitle", lang = lang),
         label_sentence(labels$caption, "caption", lang = lang)
     )

@@ -48,6 +48,21 @@ test_that("title subtitle and caption are included when present and in the right
     )
 })
 
+test_that("include_title excludes only the title", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(
+            title = "Fuel efficiency by weight",
+            subtitle = "Each point is one car",
+            caption = "Source: mtcars"
+        )
+
+    expect_equal(
+        generate_alt_text(p, include_title = FALSE),
+        "Scatter Plot. Subtitle is 'Each point is one car'. Caption is 'Source: mtcars'."
+    )
+})
+
 test_that("lang controls generated French text", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
