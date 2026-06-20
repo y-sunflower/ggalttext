@@ -32,54 +32,40 @@ test_that("multi-panel layout is described in plain language", {
     )
 })
 
-test_that("title subtitle and caption are included when present and in the right order", {
+test_that("title and caption are included when present and in the right order", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
         labs(
             title = "Fuel efficiency by weight",
-            subtitle = "Each point is one car",
             caption = "Source: mtcars"
         )
 
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Scatter Plot. Title is 'Fuel efficiency by weight'. Subtitle is 'Each point is one car'. Caption is 'Source: mtcars'."
+        "Scatter Plot. Title is 'Fuel efficiency by weight'. Caption is 'Source: mtcars'."
     )
 })
 
 test_that("plot labels can be excluded individually", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
-        labs(
-            title = "Fuel efficiency by weight",
-            subtitle = "Each point is one car",
-            caption = "Source: mtcars"
-        )
+        labs(title = "Fuel efficiency by weight", caption = "Source: mtcars")
 
     expect_equal(
         generate_alt_text(p, include_title = FALSE),
-        "Scatter Plot. Subtitle is 'Each point is one car'. Caption is 'Source: mtcars'."
-    )
-    expect_equal(
-        generate_alt_text(p, include_subtitle = FALSE),
-        "Scatter Plot. Title is 'Fuel efficiency by weight'. Caption is 'Source: mtcars'."
+        "Scatter Plot. Caption is 'Source: mtcars'."
     )
     expect_equal(
         generate_alt_text(p, include_caption = FALSE),
-        "Scatter Plot. Title is 'Fuel efficiency by weight'. Subtitle is 'Each point is one car'."
-    )
-    expect_equal(
-        generate_alt_text(p, include_caption = FALSE, include_subtitle = FALSE),
         "Scatter Plot. Title is 'Fuel efficiency by weight'."
     )
     expect_equal(
-        generate_alt_text(
-            p,
-            include_caption = FALSE,
-            include_subtitle = FALSE,
-            include_title = FALSE
-        ),
+        generate_alt_text(p, include_caption = FALSE, include_title = FALSE),
+        "Scatter Plot."
+    )
+    expect_equal(
+        generate_alt_text(p, include_caption = FALSE, include_title = FALSE),
         "Scatter Plot."
     )
 })
@@ -170,10 +156,10 @@ test_that("Complex grid with title", {
 test_that("html labels are normalized into plain text", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
-        labs(subtitle = "A<br><strong>bold</strong> move &amp; check")
+        labs(title = "A<br><strong>bold</strong> move &amp; check")
 
     text <- generate_alt_text(p)
-    expect_equal(text, "Scatter Plot. Subtitle is 'A bold move & check'.")
+    expect_equal(text, "Scatter Plot. Title is 'A bold move & check'.")
 })
 
 test_that("waffle geoms are recognised and discrete fill categories described", {

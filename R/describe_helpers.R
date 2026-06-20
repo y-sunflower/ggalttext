@@ -201,15 +201,11 @@ describe_plot_labels_sentences <- function(
     p,
     lang = "en",
     include_title = TRUE,
-    include_subtitle = TRUE,
     include_caption = TRUE
 ) {
     labels <- p$labels
     pieces <- c(
         if (include_title) label_sentence(labels$title, "title", lang = lang),
-        if (include_subtitle) {
-            label_sentence(labels$subtitle, "subtitle", lang = lang)
-        },
         if (include_caption) {
             label_sentence(labels$caption, "caption", lang = lang)
         }

@@ -32,11 +32,7 @@ alt_text_languages <- function() {
                 line_type = "line type",
                 shape = "shape"
             ),
-            labels = c(
-                title = "Title",
-                subtitle = "Subtitle",
-                caption = "Caption"
-            ),
+            labels = c(title = "Title", caption = "Caption"),
             chart_unknown = "Chart, without more information.",
             chart_combined = "Combined chart with {types}.",
             panel_simple = "The data is shown in {panel_count} small charts.",
@@ -86,11 +82,7 @@ alt_text_languages <- function() {
                 line_type = "type de ligne",
                 shape = "forme"
             ),
-            labels = c(
-                title = "Le titre",
-                subtitle = "Le sous-titre",
-                caption = "La legende"
-            ),
+            labels = c(title = "Le titre", caption = "La legende"),
             chart_unknown = "Graphique, sans information supplementaire.",
             chart_combined = "Graphique combine avec {types}.",
             panel_simple = paste0(
@@ -146,11 +138,7 @@ alt_text_languages <- function() {
                 line_type = "Linientyp",
                 shape = "Form"
             ),
-            labels = c(
-                title = "Titel",
-                subtitle = "Untertitel",
-                caption = "Beschriftung"
-            ),
+            labels = c(title = "Titel", caption = "Beschriftung"),
             chart_unknown = "Diagramm ohne weitere Informationen.",
             chart_combined = "Kombiniertes Diagramm mit {types}.",
             panel_simple = paste0(
