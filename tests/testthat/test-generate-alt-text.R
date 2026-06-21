@@ -150,14 +150,14 @@ test_that("data descriptions retain the maximum length contract", {
         labs(x = "Weight", y = "Mileage")
 
     expect_warning(
-        generate_alt_text(p, max_character = 20),
+        generate_alt_text(p, max_chars = 20),
         "Alternative text is more than 20 characters"
     )
     expect_error(
         generate_alt_text(
             p,
-            max_character = 20,
-            stop_on_max_character = TRUE
+            max_chars = 20,
+            error_on_excess = TRUE
         ),
         "Alternative text is more than 20 characters"
     )
@@ -329,29 +329,29 @@ test_that("patchwork inset does not replace the primary chart description", {
     expect_equal(text, "Scatter plot.")
 })
 
-test_that("from = auto uses built-in alt text when available", {
+test_that("source = auto uses built-in alt text when available", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
         labs(alt = "Built-in alt text.")
 
-    text <- generate_alt_text(p, from = "auto")
+    text <- generate_alt_text(p, source = "auto")
     expect_equal(text, "Built-in alt text.")
 })
 
-test_that("from = auto falls back to ggalttext when built-in alt text is missing", {
+test_that("source = auto falls back to ggalttext when built-in alt text is missing", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point()
 
-    text <- generate_alt_text(p, from = "auto")
+    text <- generate_alt_text(p, source = "auto")
     expect_equal(text, "Scatter plot.")
 })
 
-test_that("from = origin returns ggplot2 origin alt text as-is", {
+test_that("source = origin returns ggplot2 origin alt text as-is", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
         labs(alt = NA)
 
-    text <- generate_alt_text(p, from = "origin")
+    text <- generate_alt_text(p, source = "origin")
     expect_true(is.na(text))
 })
 
@@ -370,6 +370,7 @@ test_that("unsupported language errors clearly", {
 
     expect_error(
         generate_alt_text(p, lang = "es"),
-        "should be one of"
+        "'arg' should be one of \"en\", \"fr\", \"de\"",
+        fixed = TRUE
     )
 })

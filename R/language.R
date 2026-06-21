@@ -186,13 +186,8 @@ alt_text_languages <- function() {
 }
 
 #' @keywords internal
-match_language <- function(lang) {
-    match.arg(lang, choices = names(alt_text_languages()))
-}
-
-#' @keywords internal
 language_spec <- function(lang) {
-    alt_text_languages()[[match_language(lang)]]
+    alt_text_languages()[[lang]]
 }
 
 #' @keywords internal

@@ -5,7 +5,13 @@ test_that("Errors are raised with valid messages", {
 
     expect_error(
         generate_alt_text(p, "hey"),
-        "All arguments (except p, the plot) must be named.",
+        "All arguments after `p` must be named.",
+        fixed = TRUE
+    )
+
+    expect_error(
+        generate_alt_text(p, typo = "hey"),
+        "Unused argument(s): `typo`.",
         fixed = TRUE
     )
 })
