@@ -68,58 +68,6 @@ describe_panel_layout_sentence <- function(build, lang = "en") {
 }
 
 #' @keywords internal
-describe_facet_values_sentence <- function(build, lang = "en") {
-    layout <- build$layout$layout
-    if (is.null(layout) || !nrow(layout) || !"PANEL" %in% names(layout)) {
-        return("")
-    }
-
-    reserved <- c("PANEL", "ROW", "COL", "SCALE_X", "SCALE_Y", "COORD")
-    facet_vars <- setdiff(names(layout), reserved)
-    if (!length(facet_vars)) {
-        return("")
-    }
-
-    pieces <- character()
-    panel_order <- order(layout$PANEL)
-    spec <- language_spec(lang)
-
-    for (facet_var in facet_vars) {
-        vals <- as.character(layout[[facet_var]][panel_order])
-        vals <- vals[nzchar(trimws(vals))]
-        vals <- unique(vals)
-        n_vals <- length(vals)
-        if (n_vals <= 1) {
-            next
-        }
-
-        facet_name <- gsub("_", " ", facet_var, fixed = TRUE)
-        if (n_vals <= 8) {
-            sentence <- render_language_template(
-                spec$facet_values,
-                list(
-                    facet_name = facet_name,
-                    values = join_language_items(quote_values(vals), lang)
-                )
-            )
-        } else {
-            sentence <- render_language_template(
-                spec$facet_span,
-                list(
-                    facet_name = facet_name,
-                    n_vals = n_vals,
-                    first_value = vals[1],
-                    last_value = vals[n_vals]
-                )
-            )
-        }
-        pieces <- c(pieces, sentence)
-    }
-
-    pieces[nzchar(pieces)]
-}
-
-#' @keywords internal
 describe_discrete_scales_sentence <- function(build, lang = "en") {
     scales <- build$plot$scales$scales
     if (!length(scales)) {

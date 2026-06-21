@@ -40,11 +40,6 @@ alt_text_languages <- function() {
                 "The data is split into {panel_count} small charts ",
                 "arranged in a {n_rows} row(s) by {n_cols} col(s) grid."
             ),
-            facet_values = "Facets by {facet_name} are {values}.",
-            facet_span = paste0(
-                "Facets by {facet_name} span {n_vals} values from ",
-                "'{first_value}' to '{last_value}'."
-            ),
             scale_with_title = paste0(
                 "{aesthetic} categories ('{title}') run from {levels}."
             ),
@@ -93,11 +88,6 @@ alt_text_languages <- function() {
                 "Les donnees sont reparties en {panel_count} petits ",
                 "graphiques organises dans une grille de {n_rows} ",
                 "ligne(s) par {n_cols} colonne(s)."
-            ),
-            facet_values = "Les facettes par {facet_name} sont {values}.",
-            facet_span = paste0(
-                "Les facettes par {facet_name} couvrent {n_vals} ",
-                "valeurs de '{first_value}' a '{last_value}'."
             ),
             scale_with_title = paste0(
                 "Les categories de {aesthetic} ('{title}') vont de {levels}."
@@ -148,11 +138,6 @@ alt_text_languages <- function() {
                 "Die Daten sind auf {panel_count} kleine Diagramme in ",
                 "einem Raster mit {n_rows} Zeile(n) und {n_cols} ",
                 "Spalte(n) aufgeteilt."
-            ),
-            facet_values = "Facetten nach {facet_name} sind {values}.",
-            facet_span = paste0(
-                "Facetten nach {facet_name} umfassen {n_vals} Werte ",
-                "von '{first_value}' bis '{last_value}'."
             ),
             scale_with_title = paste0(
                 "Kategorien fuer {aesthetic} ('{title}') reichen von {levels}."

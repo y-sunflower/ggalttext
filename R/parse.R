@@ -83,7 +83,6 @@ generate_alt_text <- function(
     pieces <- c(
         describe_chart_type_sentence(p_main, lang = lang),
         describe_panel_layout_sentence(b, lang = lang),
-        describe_facet_values_sentence(b, lang = lang),
         describe_discrete_scales_sentence(b, lang = lang),
         describe_plot_labels_sentences(
             p_main,
