@@ -1,0 +1,31 @@
+---
+title: "Example Quarto + ggalttext"
+format:
+   typst:
+      keep-typ: true
+---
+
+```{r}
+ggalttext::enable_auto_alt_text()
+```
+
+## Hello world
+
+```{r}
+library(ggplot2)
+library(babynames)
+
+babynames <- babynames |> dplyr::filter(name %in% c("Mary", "Anna", "Emma"))
+
+ggplot(babynames, aes(x = year, y = n, group = name, fill = name)) +
+    geom_area() +
+    labs(title = "Popularity of American names")
+```
+
+## Yet another chart
+
+
+```{r}
+ggplot(mtcars, aes(x = mpg, y = cyl)) +
+    geom_point()
+```

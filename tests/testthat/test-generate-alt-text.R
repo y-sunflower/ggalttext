@@ -25,7 +25,7 @@ test_that("univariate charts describe explicitly labelled data", {
         geom_density() +
         xlab("Waiting time between eruptions (mins)")
     histogram <- ggplot(faithful, aes(waiting)) +
-        geom_histogram() +
+        geom_histogram(binwidth = 10) +
         xlab("Waiting time")
     horizontal_bar <- ggplot(mtcars, aes(y = factor(cyl))) +
         geom_bar() +
@@ -207,7 +207,7 @@ test_that("lang controls generated French text", {
         facet_wrap(~cyl) +
         labs(title = "Fuel efficiency")
 
-    text <- generate_alt_text(p, lang = "fr")
+    text <- generate_alt_text(p, lang = "fr", max_chars = 140)
     expect_equal(
         text,
         paste(
@@ -263,19 +263,19 @@ test_that("Complex grid with title", {
         ) +
         facet_wrap(~name, scale = "free_y")
 
-    text <- generate_alt_text(p)
+    text <- generate_alt_text(p, max_chars = 140)
     expect_equal(
         text,
         "Area chart split into 6 small charts arranged in a 2-row by 3-column grid, titled \u201cPopularity of American names in the previous 30 years\u201d."
     )
 
-    text <- generate_alt_text(p, lang = "fr")
+    text <- generate_alt_text(p, lang = "fr", max_chars = 180)
     expect_equal(
         text,
         "Graphique en aires reparti en 6 petits graphiques organises dans une grille de 2 lignes par 3 colonnes, avec pour titre \u00ab Popularity of American names in the previous 30 years \u00bb."
     )
 
-    text <- generate_alt_text(p, lang = "de")
+    text <- generate_alt_text(p, lang = "de", max_chars = 166)
     expect_equal(
         text,
         "Flaechendiagramm, aufgeteilt auf 6 kleine Diagramme in einem Raster mit 2 Zeilen und 3 Spalten mit dem Titel \u201ePopularity of American names in the previous 30 years\u201c."
