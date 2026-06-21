@@ -2,8 +2,11 @@ Package: ggalttext
 Title: Make 'ggplot2' Fully Accessible by Generating Alternative Text
 Version: 0.3.0
 Authors@R: 
-    person("Joseph", "Barbier", , "joseph@ysunflower.com", role = c("aut", "cre"))
-Description: Generate alternative texts from 'ggplot2' objects.
+    person("Joseph", "Barbier", , "joseph@ysunflower.com", role = c("aut", "cre", "cph"))
+Description: Generates concise alternative text for data visualizations created
+    with 'ggplot2'. Descriptions are produced by inspecting plot layers, labels,
+    scales, and facets, with support for multiple languages and alternative text
+    stored in plot metadata.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
