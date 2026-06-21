@@ -19,3 +19,4 @@
 - Prefer explicit namespace qualification for external calls, for example `ggplot2::ggplot_build()`.
 - Run Air (`air format .`) and Jarl (`jarl check .`) before accepting changes. They should both be clean.
 - When making changes, make sure it works across all available languages
+- Never specify default value of arguments of internal functions

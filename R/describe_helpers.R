@@ -1,5 +1,5 @@
 #' @keywords internal
-describe_chart_type_sentence <- function(p, lang = "en") {
+describe_chart_type_sentence <- function(p, lang) {
     chart_type_keys <- unique(vapply(
         p$layers,
         layer_to_chart_type_key,
@@ -32,7 +32,7 @@ describe_chart_type_sentence <- function(p, lang = "en") {
 }
 
 #' @keywords internal
-append_data_type <- function(sentence, p, build, lang = "en") {
+append_data_type <- function(sentence, p, build, lang) {
     labels <- c(
         x = explicit_aesthetic_label(p, build, "x"),
         y = explicit_aesthetic_label(p, build, "y"),
@@ -152,7 +152,7 @@ explicit_aesthetic_label <- function(p, build, aesthetic) {
 }
 
 #' @keywords internal
-describe_panel_layout_sentence <- function(build, lang = "en", chart = NULL) {
+describe_panel_layout_sentence <- function(build, lang, chart) {
     layout <- build$layout$layout
     if (is.null(layout) || !nrow(layout) || !"PANEL" %in% names(layout)) {
         return("")
@@ -200,7 +200,7 @@ describe_panel_layout_sentence <- function(build, lang = "en", chart = NULL) {
 }
 
 #' @keywords internal
-describe_discrete_scales_sentence <- function(build, lang = "en") {
+describe_discrete_scales_sentence <- function(build, lang) {
     scales <- build$plot$scales$scales
     if (!length(scales)) {
         return("")
@@ -255,7 +255,7 @@ describe_discrete_scales_sentence <- function(build, lang = "en") {
             )
         }
 
-        aes_label <- aesthetic_label(aes_key, lang = lang)
+        aes_label <- aesthetic_label(aes_key, lang)
         aes_label <- apply_language_case(aes_label, spec$aesthetic_case)
         if (nzchar(title)) {
             sentence <- render_language_template(
@@ -277,7 +277,7 @@ describe_discrete_scales_sentence <- function(build, lang = "en") {
 }
 
 #' @keywords internal
-append_plot_title <- function(sentence, p, lang = "en", include_title = TRUE) {
+append_plot_title <- function(sentence, p, lang, include_title) {
     if (!include_title) {
         return(sentence)
     }
@@ -378,6 +378,6 @@ aesthetic_key <- function(aesthetic) {
 }
 
 #' @keywords internal
-aesthetic_label <- function(aesthetic, lang = "en") {
+aesthetic_label <- function(aesthetic, lang) {
     language_lookup(lang, "aesthetics", aesthetic_key(aesthetic))
 }
