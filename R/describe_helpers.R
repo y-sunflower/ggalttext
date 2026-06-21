@@ -1,14 +1,8 @@
 #' @keywords internal
 describe_chart_type_sentence <- function(p, lang = "en") {
-    geom_classes <- vapply(
-        p$layers,
-        function(layer) class(layer$geom)[1],
-        character(1)
-    )
-    geom_classes <- unique(geom_classes[nzchar(geom_classes)])
     chart_type_keys <- unique(vapply(
-        geom_classes,
-        geom_class_to_chart_type_key,
+        p$layers,
+        layer_to_chart_type_key,
         character(1)
     ))
     chart_type_keys <- chart_type_keys[nzchar(chart_type_keys)]
@@ -35,6 +29,126 @@ describe_chart_type_sentence <- function(p, lang = "en") {
     }
 
     return(sentence)
+}
+
+#' @keywords internal
+append_data_type <- function(sentence, p, build, lang = "en") {
+    labels <- c(
+        x = explicit_aesthetic_label(p, build, "x"),
+        y = explicit_aesthetic_label(p, build, "y"),
+        fill = explicit_aesthetic_label(p, build, "fill")
+    )
+    layer_keys <- vapply(p$layers, layer_to_chart_type_key, character(1))
+    keep <- layer_keys != "annotated_chart"
+    layers <- build$plot$layers[keep]
+    layer_keys <- layer_keys[keep]
+
+    if (
+        !length(layers) ||
+            any(layer_keys %in% c("chart", "map", "waffle_chart"))
+    ) {
+        return(sentence)
+    }
+
+    mappings <- unique(unlist(lapply(layers, function(layer) {
+        names(layer$computed_mapping)
+    })))
+    spec <- language_spec(lang)
+    chart <- sub("[.]$", "", sentence)
+
+    if (all(layer_keys == "heatmap")) {
+        if (
+            !all(c("x", "y", "fill") %in% mappings) ||
+                !all(nzchar(labels[c("x", "y", "fill")]))
+        ) {
+            return(sentence)
+        }
+        return(render_language_template(
+            spec$chart_data_heatmap,
+            list(
+                chart = chart,
+                fill = labels["fill"],
+                y = labels["y"],
+                x = labels["x"]
+            )
+        ))
+    }
+    if (any(layer_keys == "heatmap")) {
+        return(sentence)
+    }
+
+    stat_classes <- vapply(
+        layers,
+        function(layer) class(layer$stat)[1],
+        character(1)
+    )
+    univariate_stats <- c("StatBin", "StatCount", "StatDensity")
+    if (all(stat_classes %in% univariate_stats)) {
+        flipped <- vapply(
+            layers,
+            function(layer) {
+                isTRUE(layer$computed_geom_params$flipped_aes)
+            },
+            logical(1)
+        )
+        if (length(unique(flipped)) > 1) {
+            return(sentence)
+        }
+        axis <- if (flipped[1]) "y" else "x"
+        if (!axis %in% mappings || !nzchar(labels[axis])) {
+            return(sentence)
+        }
+        return(render_language_template(
+            spec$chart_data_one,
+            list(chart = chart, data = labels[axis])
+        ))
+    }
+    if (any(stat_classes %in% univariate_stats)) {
+        return(sentence)
+    }
+
+    position_mappings <- intersect(c("x", "y"), mappings)
+    if (
+        all(layer_keys %in% c("box_plot", "violin_plot")) &&
+            length(position_mappings) == 1
+    ) {
+        axis <- position_mappings[1]
+        if (!nzchar(labels[axis])) {
+            return(sentence)
+        }
+        return(render_language_template(
+            spec$chart_data_one,
+            list(chart = chart, data = labels[axis])
+        ))
+    }
+
+    if (
+        !all(c("x", "y") %in% mappings) ||
+            !all(nzchar(labels[c("x", "y")]))
+    ) {
+        return(sentence)
+    }
+
+    render_language_template(
+        spec$chart_data_two,
+        list(chart = chart, y = labels["y"], x = labels["x"])
+    )
+}
+
+#' @keywords internal
+explicit_aesthetic_label <- function(p, build, aesthetic) {
+    scale <- build$plot$scales$get_scales(aesthetic)
+    scale_label <- if (!is.null(scale) && !inherits(scale$name, "waiver")) {
+        scale$name
+    }
+
+    plot_label <- p$labels[[aesthetic]]
+    label <- if (!is.null(scale_label)) scale_label else plot_label
+    if (is.null(label) || inherits(label, "waiver")) {
+        return("")
+    }
+
+    normalize_label_text(label)
 }
 
 #' @keywords internal
@@ -239,6 +353,15 @@ geom_class_to_chart_type_key <- function(geom_class) {
         GeomSf = "map",
         "chart"
     )
+}
+
+#' @keywords internal
+layer_to_chart_type_key <- function(layer) {
+    if (inherits(layer$geom, "GeomBar") && inherits(layer$stat, "StatBin")) {
+        return("histogram")
+    }
+
+    geom_class_to_chart_type_key(class(layer$geom)[1])
 }
 
 #' @keywords internal

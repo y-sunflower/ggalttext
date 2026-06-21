@@ -20,6 +20,149 @@ test_that("multi-geom chart lists combined chart types", {
     expect_equal(text, "Combined chart with scatter plot and line chart.")
 })
 
+test_that("univariate charts describe explicitly labelled data", {
+    density <- ggplot(faithful, aes(waiting)) +
+        geom_density() +
+        xlab("Waiting time between eruptions (mins)")
+    histogram <- ggplot(faithful, aes(waiting)) +
+        geom_histogram() +
+        xlab("Waiting time")
+    horizontal_bar <- ggplot(mtcars, aes(y = factor(cyl))) +
+        geom_bar() +
+        ylab("Cylinders")
+
+    expect_equal(
+        generate_alt_text(density),
+        "Density plot of Waiting time between eruptions (mins)."
+    )
+    expect_equal(generate_alt_text(histogram), "Histogram of Waiting time.")
+    expect_equal(generate_alt_text(horizontal_bar), "Bar chart of Cylinders.")
+})
+
+test_that("two-variable charts require two explicit labels", {
+    labelled <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(x = "Weight", y = "Mileage")
+    partly_labelled <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        xlab("Weight")
+    inferred <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point()
+
+    expect_equal(
+        generate_alt_text(labelled),
+        "Scatter plot of Mileage by Weight."
+    )
+    expect_equal(generate_alt_text(partly_labelled), "Scatter plot.")
+    expect_equal(generate_alt_text(inferred), "Scatter plot.")
+})
+
+test_that("explicit scale names are used as data labels", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_line() +
+        scale_x_continuous(name = "Weight") +
+        scale_y_continuous(name = "Mileage")
+
+    expect_equal(generate_alt_text(p), "Line chart of Mileage by Weight.")
+})
+
+test_that("univariate box plots use their sole data axis", {
+    p <- ggplot(mtcars, aes(y = mpg)) +
+        geom_boxplot() +
+        ylab("Mileage")
+
+    expect_equal(generate_alt_text(p), "Box plot of Mileage.")
+})
+
+test_that("heatmaps describe the fill measure and both axes", {
+    labelled <- ggplot(
+        mtcars,
+        aes(factor(cyl), factor(gear), fill = mpg)
+    ) +
+        geom_tile() +
+        labs(x = "Cylinders", y = "Gears", fill = "Mileage")
+    missing_fill <- labelled + labs(fill = NULL)
+
+    expect_equal(
+        generate_alt_text(labelled),
+        "Heatmap of Mileage by Gears and Cylinders."
+    )
+    expect_equal(generate_alt_text(missing_fill), "Heatmap.")
+})
+
+test_that("compatible combined charts share a data description", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        geom_line() +
+        labs(x = "Weight", y = "Mileage")
+
+    expect_equal(
+        generate_alt_text(p),
+        "Combined chart with scatter plot and line chart of Mileage by Weight."
+    )
+})
+
+test_that("incompatible combined charts omit the data description", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        geom_density(aes(y = after_stat(density))) +
+        labs(x = "Weight", y = "Mileage")
+
+    expect_equal(
+        generate_alt_text(p),
+        "Combined chart with scatter plot and density plot."
+    )
+})
+
+test_that("data descriptions are translated", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(x = "Weight", y = "Mileage")
+
+    expect_equal(
+        generate_alt_text(p, lang = "fr"),
+        "Nuage de points de Mileage en fonction de Weight."
+    )
+    expect_equal(
+        generate_alt_text(p, lang = "de"),
+        "Streudiagramm fuer Mileage nach Weight."
+    )
+})
+
+test_that("data descriptions compose with facets and titles", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        facet_wrap(~cyl) +
+        labs(x = "Weight", y = "Mileage", title = "Efficiency")
+
+    expect_equal(
+        generate_alt_text(p),
+        paste0(
+            "Scatter plot of Mileage by Weight split into 3 small charts ",
+            "arranged in a 1-row by 3-column grid, titled “Efficiency”."
+        )
+    )
+})
+
+test_that("data descriptions retain the maximum length contract", {
+    p <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_point() +
+        labs(x = "Weight", y = "Mileage")
+
+    expect_warning(
+        generate_alt_text(p, max_character = 20),
+        "Alternative text is more than 20 characters"
+    )
+    expect_error(
+        generate_alt_text(
+            p,
+            max_character = 20,
+            stop_on_max_character = TRUE
+        ),
+        "Alternative text is more than 20 characters"
+    )
+})
+
 test_that("multi-panel layout is described in plain language", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +

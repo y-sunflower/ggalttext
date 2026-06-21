@@ -36,6 +36,9 @@ alt_text_languages <- function() {
             panel_col = c(one = "column", other = "columns"),
             chart_unknown = "Chart, without more information.",
             chart_combined = "Combined chart with {types}.",
+            chart_data_one = "{chart} of {data}.",
+            chart_data_two = "{chart} of {y} by {x}.",
+            chart_data_heatmap = "{chart} of {fill} by {y} and {x}.",
             panel_simple = "The data is shown in {panel_count} small charts.",
             panel_grid = paste0(
                 "The data is split into {panel_count} small charts ",
@@ -88,6 +91,9 @@ alt_text_languages <- function() {
             panel_col = c(one = "colonne", other = "colonnes"),
             chart_unknown = "Graphique, sans information supplementaire.",
             chart_combined = "Graphique combine avec {types}.",
+            chart_data_one = "{chart} de {data}.",
+            chart_data_two = "{chart} de {y} en fonction de {x}.",
+            chart_data_heatmap = "{chart} de {fill} selon {y} et {x}.",
             panel_simple = paste0(
                 "Les donnees sont affichees dans {panel_count} ",
                 "petits graphiques."
@@ -148,6 +154,9 @@ alt_text_languages <- function() {
             panel_col = c(one = "Spalte", other = "Spalten"),
             chart_unknown = "Diagramm ohne weitere Informationen.",
             chart_combined = "Kombiniertes Diagramm mit {types}.",
+            chart_data_one = "{chart} fuer {data}.",
+            chart_data_two = "{chart} fuer {y} nach {x}.",
+            chart_data_heatmap = "{chart} fuer {fill} nach {y} und {x}.",
             panel_simple = paste0(
                 "Die Daten werden in {panel_count} kleinen Diagrammen gezeigt."
             ),

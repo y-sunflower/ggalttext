@@ -79,6 +79,12 @@ generate_alt_text <- function(
     b <- ggplot2::ggplot_build(p_main)
 
     chart_sentence <- describe_chart_type_sentence(p_main, lang = lang)
+    chart_sentence <- append_data_type(
+        chart_sentence,
+        p_main,
+        b,
+        lang = lang
+    )
     chart <- sub("[.]$", "", chart_sentence)
     panel_sentence <- describe_panel_layout_sentence(
         b,
