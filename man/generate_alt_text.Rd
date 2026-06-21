@@ -9,7 +9,6 @@ generate_alt_text(
   ...,
   lang = "en",
   include_title = TRUE,
-  include_caption = TRUE,
   max_character = 125,
   stop_on_max_character = FALSE,
   from = c("default", "auto", "origin")
@@ -25,9 +24,6 @@ Supported values are \code{"en"}, \code{"fr"} (French), and \code{"de"} (German)
 
 \item{include_title}{Whether to include the title of the plot, if any, in the
 alternative text. This is mostly useful to reduce the length of the text.}
-
-\item{include_caption}{Whether to include the caption of the plot, if any, in
-the alternative text. This is mostly useful to reduce the length of the text.}
 
 \item{max_character}{The maximum number of characters allowed (default to 125 as
 recommended by most references). If above, it will raise a warning. If
@@ -58,7 +54,8 @@ gives an overview of what's inside the chart such as:
 \itemize{
 \item the kind of chart(s)
 \item the number of chart(s) for facets
-\item the title and caption
+\item the title
+\item ...
 }
 
 The text can be generated in: English (default), French or

@@ -38,7 +38,7 @@ describe_chart_type_sentence <- function(p, lang = "en") {
 }
 
 #' @keywords internal
-describe_panel_layout_sentence <- function(build, lang = "en") {
+describe_panel_layout_sentence <- function(build, lang = "en", chart = NULL) {
     layout <- build$layout$layout
     if (is.null(layout) || !nrow(layout) || !"PANEL" %in% names(layout)) {
         return("")
@@ -50,20 +50,38 @@ describe_panel_layout_sentence <- function(build, lang = "en") {
     }
 
     spec <- language_spec(lang)
+    template_prefix <- if (is.null(chart)) "panel" else "chart_panel"
     has_grid <- all(c("ROW", "COL") %in% names(layout))
     if (!has_grid) {
         return(render_language_template(
-            spec$panel_simple,
-            list(panel_count = panel_count)
+            spec[[paste0(template_prefix, "_simple")]],
+            list(chart = chart, panel_count = panel_count)
         ))
     }
 
     n_rows <- max(layout$ROW, na.rm = TRUE)
     n_cols <- max(layout$COL, na.rm = TRUE)
+    row_label <- if (n_rows == 1) {
+        spec$panel_row["one"]
+    } else {
+        spec$panel_row["other"]
+    }
+    col_label <- if (n_cols == 1) {
+        spec$panel_col["one"]
+    } else {
+        spec$panel_col["other"]
+    }
 
     render_language_template(
-        spec$panel_grid,
-        list(panel_count = panel_count, n_rows = n_rows, n_cols = n_cols)
+        spec[[paste0(template_prefix, "_grid")]],
+        list(
+            chart = chart,
+            panel_count = panel_count,
+            n_rows = n_rows,
+            n_cols = n_cols,
+            row_label = unname(row_label),
+            col_label = unname(col_label)
+        )
     )
 }
 
@@ -148,15 +166,11 @@ describe_discrete_scales_sentence <- function(build, lang = "en") {
 describe_plot_labels_sentences <- function(
     p,
     lang = "en",
-    include_title = TRUE,
-    include_caption = TRUE
+    include_title = TRUE
 ) {
     labels <- p$labels
     pieces <- c(
-        if (include_title) label_sentence(labels$title, "title", lang = lang),
-        if (include_caption) {
-            label_sentence(labels$caption, "caption", lang = lang)
-        }
+        if (include_title) label_sentence(labels$title, "title", lang = lang)
     )
     pieces[nzchar(pieces)]
 }

@@ -5,7 +5,7 @@ alt_text_languages <- function() {
         en = list(
             conjunction = "and",
             serial_comma = TRUE,
-            single_chart_case = "title",
+            single_chart_case = "sentence",
             aesthetic_case = "title",
             chart_types = c(
                 scatter_plot = "scatter plot",
@@ -32,13 +32,21 @@ alt_text_languages <- function() {
                 line_type = "line type",
                 shape = "shape"
             ),
-            labels = c(title = "Title", caption = "Caption"),
+            labels = c(title = "Title"),
+            panel_row = c(one = "row", other = "rows"),
+            panel_col = c(one = "column", other = "columns"),
             chart_unknown = "Chart, without more information.",
             chart_combined = "Combined chart with {types}.",
             panel_simple = "The data is shown in {panel_count} small charts.",
             panel_grid = paste0(
                 "The data is split into {panel_count} small charts ",
-                "arranged in a {n_rows} row(s) by {n_cols} col(s) grid."
+                "arranged in a grid with {n_rows} {row_label} and ",
+                "{n_cols} {col_label}."
+            ),
+            chart_panel_simple = "{chart} split into {panel_count} small charts.",
+            chart_panel_grid = paste0(
+                "{chart} split into {panel_count} small charts arranged in a ",
+                "{n_rows}-row by {n_cols}-column grid."
             ),
             scale_with_title = paste0(
                 "{aesthetic} categories ('{title}') run from {levels}."
@@ -77,7 +85,9 @@ alt_text_languages <- function() {
                 line_type = "type de ligne",
                 shape = "forme"
             ),
-            labels = c(title = "Le titre", caption = "La legende"),
+            labels = c(title = "Le titre"),
+            panel_row = c(one = "ligne", other = "lignes"),
+            panel_col = c(one = "colonne", other = "colonnes"),
             chart_unknown = "Graphique, sans information supplementaire.",
             chart_combined = "Graphique combine avec {types}.",
             panel_simple = paste0(
@@ -87,7 +97,15 @@ alt_text_languages <- function() {
             panel_grid = paste0(
                 "Les donnees sont reparties en {panel_count} petits ",
                 "graphiques organises dans une grille de {n_rows} ",
-                "ligne(s) par {n_cols} colonne(s)."
+                "{row_label} par {n_cols} {col_label}."
+            ),
+            chart_panel_simple = paste0(
+                "{chart} reparti en {panel_count} petits graphiques."
+            ),
+            chart_panel_grid = paste0(
+                "{chart} reparti en {panel_count} petits graphiques organises ",
+                "dans une grille de {n_rows} {row_label} par {n_cols} ",
+                "{col_label}."
             ),
             scale_with_title = paste0(
                 "Les categories de {aesthetic} ('{title}') vont de {levels}."
@@ -128,7 +146,9 @@ alt_text_languages <- function() {
                 line_type = "Linientyp",
                 shape = "Form"
             ),
-            labels = c(title = "Titel", caption = "Beschriftung"),
+            labels = c(title = "Titel"),
+            panel_row = c(one = "Zeile", other = "Zeilen"),
+            panel_col = c(one = "Spalte", other = "Spalten"),
             chart_unknown = "Diagramm ohne weitere Informationen.",
             chart_combined = "Kombiniertes Diagramm mit {types}.",
             panel_simple = paste0(
@@ -136,8 +156,16 @@ alt_text_languages <- function() {
             ),
             panel_grid = paste0(
                 "Die Daten sind auf {panel_count} kleine Diagramme in ",
-                "einem Raster mit {n_rows} Zeile(n) und {n_cols} ",
-                "Spalte(n) aufgeteilt."
+                "einem Raster mit {n_rows} {row_label} und {n_cols} ",
+                "{col_label} aufgeteilt."
+            ),
+            chart_panel_simple = paste0(
+                "{chart}, aufgeteilt auf {panel_count} kleine Diagramme."
+            ),
+            chart_panel_grid = paste0(
+                "{chart}, aufgeteilt auf {panel_count} kleine Diagramme in ",
+                "einem Raster mit {n_rows} {row_label} und {n_cols} ",
+                "{col_label}."
             ),
             scale_with_title = paste0(
                 "Kategorien fuer {aesthetic} ('{title}') reichen von {levels}."

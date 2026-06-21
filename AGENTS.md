@@ -18,3 +18,4 @@
 - Follow existing snake_case names such as `describe_panel_layout_sentence()`. Keep exported interfaces documented with roxygen2; mark private helpers with `@keywords internal`.
 - Prefer explicit namespace qualification for external calls, for example `ggplot2::ggplot_build()`.
 - Run Air (`air format .`) and Jarl (`jarl check .`) before accepting changes. They should both be clean.
+- When making changes, make sure it works across all available languages

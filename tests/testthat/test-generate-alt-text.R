@@ -8,7 +8,7 @@ test_that("single-geom chart description starts with chart type", {
         geom_point()
 
     text <- generate_alt_text(p)
-    expect_equal(text, "Scatter Plot.")
+    expect_equal(text, "Scatter plot.")
 })
 
 test_that("multi-geom chart lists combined chart types", {
@@ -28,11 +28,11 @@ test_that("multi-panel layout is described in plain language", {
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Scatter Plot. The data is split into 3 small charts arranged in a 1 row(s) by 3 col(s) grid. Facets by cyl are '4', '6', and '8'."
+        "Scatter plot split into 3 small charts arranged in a 1-row by 3-column grid."
     )
 })
 
-test_that("title and caption are included when present and in the right order", {
+test_that("title is included when present and in the right order", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
         labs(
@@ -43,7 +43,7 @@ test_that("title and caption are included when present and in the right order", 
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Scatter Plot. Title is 'Fuel efficiency by weight'. Caption is 'Source: mtcars'."
+        "Scatter plot. Title is 'Fuel efficiency by weight'."
     )
 })
 
@@ -54,19 +54,7 @@ test_that("plot labels can be excluded individually", {
 
     expect_equal(
         generate_alt_text(p, include_title = FALSE),
-        "Scatter Plot. Caption is 'Source: mtcars'."
-    )
-    expect_equal(
-        generate_alt_text(p, include_caption = FALSE),
-        "Scatter Plot. Title is 'Fuel efficiency by weight'."
-    )
-    expect_equal(
-        generate_alt_text(p, include_caption = FALSE, include_title = FALSE),
-        "Scatter Plot."
-    )
-    expect_equal(
-        generate_alt_text(p, include_caption = FALSE, include_title = FALSE),
-        "Scatter Plot."
+        "Scatter plot."
     )
 })
 
@@ -80,12 +68,10 @@ test_that("lang controls generated French text", {
     expect_equal(
         text,
         paste(
-            "Nuage de points.",
             paste0(
-                "Les donnees sont reparties en 3 petits graphiques organises ",
-                "dans une grille de 1 ligne(s) par 3 colonne(s)."
+                "Nuage de points reparti en 3 petits graphiques organises ",
+                "dans une grille de 1 ligne par 3 colonnes."
             ),
-            "Les facettes par cyl sont '4', '6' et '8'.",
             "Le titre est 'Fuel efficiency'."
         )
     )
@@ -137,19 +123,19 @@ test_that("Complex grid with title", {
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Facets by name are 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica', and 'Patricia'. Title is 'Popularity of American names in the previous 30 years'."
+        "Area chart split into 6 small charts arranged in a 2-row by 3-column grid. Title is 'Popularity of American names in the previous 30 years'."
     )
 
     text <- generate_alt_text(p, lang = "fr")
     expect_equal(
         text,
-        "Graphique en aires. Les donnees sont reparties en 6 petits graphiques organises dans une grille de 2 ligne(s) par 3 colonne(s). Les facettes par name sont 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica' et 'Patricia'. Le titre est 'Popularity of American names in the previous 30 years'."
+        "Graphique en aires reparti en 6 petits graphiques organises dans une grille de 2 lignes par 3 colonnes. Le titre est 'Popularity of American names in the previous 30 years'."
     )
 
     text <- generate_alt_text(p, lang = "de")
     expect_equal(
         text,
-        "Flaechendiagramm. Die Daten sind auf 6 kleine Diagramme in einem Raster mit 2 Zeile(n) und 3 Spalte(n) aufgeteilt. Facetten nach name sind 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica' und 'Patricia'. Titel ist 'Popularity of American names in the previous 30 years'."
+        "Flaechendiagramm, aufgeteilt auf 6 kleine Diagramme in einem Raster mit 2 Zeilen und 3 Spalten. Titel ist 'Popularity of American names in the previous 30 years'."
     )
 })
 
@@ -159,7 +145,7 @@ test_that("html labels are normalized into plain text", {
         labs(title = "A<br><strong>bold</strong> move &amp; check")
 
     text <- generate_alt_text(p)
-    expect_equal(text, "Scatter Plot. Title is 'A bold move & check'.")
+    expect_equal(text, "Scatter plot. Title is 'A bold move & check'.")
 })
 
 test_that("waffle geoms are recognised and discrete fill categories described", {
@@ -179,7 +165,7 @@ test_that("waffle geoms are recognised and discrete fill categories described", 
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Waffle Chart. Fill categories ('Energy Source') run from 'Coal', 'Gas', and 'Oil'."
+        "Waffle chart. Fill categories ('Energy Source') run from 'Coal', 'Gas', and 'Oil'."
     )
 })
 
@@ -197,7 +183,7 @@ test_that("patchwork inset does not replace the primary chart description", {
         )
 
     text <- generate_alt_text(p)
-    expect_equal(text, "Scatter Plot.")
+    expect_equal(text, "Scatter plot.")
 })
 
 test_that("from = auto uses built-in alt text when available", {
@@ -214,7 +200,7 @@ test_that("from = auto falls back to ggalttext when built-in alt text is missing
         geom_point()
 
     text <- generate_alt_text(p, from = "auto")
-    expect_equal(text, "Scatter Plot.")
+    expect_equal(text, "Scatter plot.")
 })
 
 test_that("from = origin returns ggplot2 origin alt text as-is", {

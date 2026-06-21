@@ -6,8 +6,8 @@ This text is **not** intended to describe the plot word for word, nor how it was
 
 - the kind of chart(s)
 - the number of chart(s) for facets
-- the title and caption
-- and more!
+- the title
+- ...
 
 <br>
 

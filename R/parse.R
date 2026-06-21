@@ -9,7 +9,8 @@
 #' gives an overview of what's inside the chart such as:
 #' - the kind of chart(s)
 #' - the number of chart(s) for facets
-#' - the title and caption
+#' - the title
+#' - ...
 #'
 #' The text can be generated in: English (default), French or
 #' German.
@@ -22,8 +23,6 @@
 #'     Supported values are `"en"`, `"fr"` (French), and `"de"` (German).
 #' @param include_title Whether to include the title of the plot, if any, in the
 #'     alternative text. This is mostly useful to reduce the length of the text.
-#' @param include_caption Whether to include the caption of the plot, if any, in
-#'     the alternative text. This is mostly useful to reduce the length of the text.
 #' @param max_character The maximum number of characters allowed (default to 125 as
 #'     recommended by most references). If above, it will raise a warning. If
 #'     `stop_on_max_character = TRUE`, then it will raise an error.
@@ -46,7 +45,6 @@ generate_alt_text <- function(
     ...,
     lang = "en",
     include_title = TRUE,
-    include_caption = TRUE,
     max_character = 125,
     stop_on_max_character = FALSE,
     from = c("default", "auto", "origin")
@@ -80,15 +78,21 @@ generate_alt_text <- function(
     p_main <- resolve_plot_for_alt(p)
     b <- ggplot2::ggplot_build(p_main)
 
+    chart_sentence <- describe_chart_type_sentence(p_main, lang = lang)
+    chart <- sub("[.]$", "", chart_sentence)
+    panel_sentence <- describe_panel_layout_sentence(
+        b,
+        chart = chart,
+        lang = lang
+    )
+
     pieces <- c(
-        describe_chart_type_sentence(p_main, lang = lang),
-        describe_panel_layout_sentence(b, lang = lang),
+        if (nzchar(panel_sentence)) panel_sentence else chart_sentence,
         describe_discrete_scales_sentence(b, lang = lang),
         describe_plot_labels_sentences(
             p_main,
             lang = lang,
-            include_title = include_title,
-            include_caption = include_caption
+            include_title = include_title
         )
     )
 
@@ -103,7 +107,7 @@ generate_alt_text <- function(
             "). ",
             "This is above what's considered best for alt texts. ",
             "Consider making it shorter with `include_title`, ",
-            "or `include_caption` arguments or ",
+            "argument or ",
             "increase this threshold with the `max_character` argument."
         )
         if (stop_on_max_character) {
