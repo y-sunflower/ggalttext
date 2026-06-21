@@ -10,7 +10,7 @@ This text is **not** intended to describe the plot word for word, nor how it was
 - ...
 
 > [!TIP]
-> `Add `ggalttext::enable_auto_alt_text()` at the top of your Quarto document and **every** ggplot chart will now have its own customized alternative text (no matter the output format: HTML, PDF, Typst, etc).
+> Add `ggalttext::enable_auto_alt_text()` at the top of your Quarto document and **every** ggplot chart will now have its own customized alternative text (no matter the output format: HTML, PDF, Typst, etc).
 
 <br>
 
