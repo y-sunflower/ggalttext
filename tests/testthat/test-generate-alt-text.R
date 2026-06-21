@@ -1,7 +1,17 @@
 library(ggplot2)
 library(dplyr)
 library(babynames)
-library(waffle)
+
+GeomWaffle <- ggplot2::ggproto("GeomWaffle", ggplot2::GeomPoint)
+
+geom_waffle <- function(mapping) {
+    ggplot2::layer(
+        mapping = mapping,
+        stat = "identity",
+        geom = GeomWaffle,
+        position = "identity"
+    )
+}
 
 test_that("single-geom chart description starts with chart type", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
@@ -294,8 +304,8 @@ test_that("html labels are normalized into plain text", {
 test_that("waffle geoms are recognised and discrete fill categories described", {
     d <- data.frame(source = c("Coal", "Oil", "Gas"), value = c(50, 30, 20))
 
-    p <- ggplot(d, aes(fill = source, values = value)) +
-        geom_waffle(n_rows = 5) +
+    p <- ggplot(d) +
+        geom_waffle(aes(value, value, fill = source)) +
         scale_fill_manual(
             values = c(
                 Coal = "#111111",

@@ -18,9 +18,6 @@ Suggests:
     babynames,
     ggtext,
     dplyr,
-    waffle,
     patchwork,
-    testthat (>= 3.0.0),
-Remotes:
-    hrbrmstr/waffle
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
