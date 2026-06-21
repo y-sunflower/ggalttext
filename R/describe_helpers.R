@@ -1,14 +1,8 @@
 #' @keywords internal
-describe_chart_type_sentence <- function(p, lang = "en") {
-    geom_classes <- vapply(
-        p$layers,
-        function(layer) class(layer$geom)[1],
-        character(1)
-    )
-    geom_classes <- unique(geom_classes[nzchar(geom_classes)])
+describe_chart_type_sentence <- function(p, lang) {
     chart_type_keys <- unique(vapply(
-        geom_classes,
-        geom_class_to_chart_type_key,
+        p$layers,
+        layer_to_chart_type_key,
         character(1)
     ))
     chart_type_keys <- chart_type_keys[nzchar(chart_type_keys)]
@@ -38,7 +32,127 @@ describe_chart_type_sentence <- function(p, lang = "en") {
 }
 
 #' @keywords internal
-describe_panel_layout_sentence <- function(build, lang = "en") {
+append_data_type <- function(sentence, p, build, lang) {
+    labels <- c(
+        x = explicit_aesthetic_label(p, build, "x"),
+        y = explicit_aesthetic_label(p, build, "y"),
+        fill = explicit_aesthetic_label(p, build, "fill")
+    )
+    layer_keys <- vapply(p$layers, layer_to_chart_type_key, character(1))
+    keep <- layer_keys != "annotated_chart"
+    layers <- build$plot$layers[keep]
+    layer_keys <- layer_keys[keep]
+
+    if (
+        !length(layers) ||
+            any(layer_keys %in% c("chart", "map", "waffle_chart"))
+    ) {
+        return(sentence)
+    }
+
+    mappings <- unique(unlist(lapply(layers, function(layer) {
+        names(layer$computed_mapping)
+    })))
+    spec <- language_spec(lang)
+    chart <- sub("[.]$", "", sentence)
+
+    if (all(layer_keys == "heatmap")) {
+        if (
+            !all(c("x", "y", "fill") %in% mappings) ||
+                !all(nzchar(labels[c("x", "y", "fill")]))
+        ) {
+            return(sentence)
+        }
+        return(render_language_template(
+            spec$chart_data_heatmap,
+            list(
+                chart = chart,
+                fill = labels["fill"],
+                y = labels["y"],
+                x = labels["x"]
+            )
+        ))
+    }
+    if (any(layer_keys == "heatmap")) {
+        return(sentence)
+    }
+
+    stat_classes <- vapply(
+        layers,
+        function(layer) class(layer$stat)[1],
+        character(1)
+    )
+    univariate_stats <- c("StatBin", "StatCount", "StatDensity")
+    if (all(stat_classes %in% univariate_stats)) {
+        flipped <- vapply(
+            layers,
+            function(layer) {
+                isTRUE(layer$computed_geom_params$flipped_aes)
+            },
+            logical(1)
+        )
+        if (length(unique(flipped)) > 1) {
+            return(sentence)
+        }
+        axis <- if (flipped[1]) "y" else "x"
+        if (!axis %in% mappings || !nzchar(labels[axis])) {
+            return(sentence)
+        }
+        return(render_language_template(
+            spec$chart_data_one,
+            list(chart = chart, data = labels[axis])
+        ))
+    }
+    if (any(stat_classes %in% univariate_stats)) {
+        return(sentence)
+    }
+
+    position_mappings <- intersect(c("x", "y"), mappings)
+    if (
+        all(layer_keys %in% c("box_plot", "violin_plot")) &&
+            length(position_mappings) == 1
+    ) {
+        axis <- position_mappings[1]
+        if (!nzchar(labels[axis])) {
+            return(sentence)
+        }
+        return(render_language_template(
+            spec$chart_data_one,
+            list(chart = chart, data = labels[axis])
+        ))
+    }
+
+    if (
+        !all(c("x", "y") %in% mappings) ||
+            !all(nzchar(labels[c("x", "y")]))
+    ) {
+        return(sentence)
+    }
+
+    render_language_template(
+        spec$chart_data_two,
+        list(chart = chart, y = labels["y"], x = labels["x"])
+    )
+}
+
+#' @keywords internal
+explicit_aesthetic_label <- function(p, build, aesthetic) {
+    scale <- build$plot$scales$get_scales(aesthetic)
+    scale_label <- if (!is.null(scale) && !inherits(scale$name, "waiver")) {
+        scale$name
+    }
+
+    plot_label <- p$labels[[aesthetic]]
+    label <- if (!is.null(scale_label)) scale_label else plot_label
+    if (is.null(label) || inherits(label, "waiver")) {
+        return("")
+    }
+
+    normalize_label_text(label)
+}
+
+#' @keywords internal
+describe_panel_layout_sentence <- function(build, lang, chart) {
     layout <- build$layout$layout
     if (is.null(layout) || !nrow(layout) || !"PANEL" %in% names(layout)) {
         return("")
@@ -50,77 +164,43 @@ describe_panel_layout_sentence <- function(build, lang = "en") {
     }
 
     spec <- language_spec(lang)
+    template_prefix <- if (is.null(chart)) "panel" else "chart_panel"
     has_grid <- all(c("ROW", "COL") %in% names(layout))
     if (!has_grid) {
         return(render_language_template(
-            spec$panel_simple,
-            list(panel_count = panel_count)
+            spec[[paste0(template_prefix, "_simple")]],
+            list(chart = chart, panel_count = panel_count)
         ))
     }
 
     n_rows <- max(layout$ROW, na.rm = TRUE)
     n_cols <- max(layout$COL, na.rm = TRUE)
+    row_label <- if (n_rows == 1) {
+        spec$panel_row["one"]
+    } else {
+        spec$panel_row["other"]
+    }
+    col_label <- if (n_cols == 1) {
+        spec$panel_col["one"]
+    } else {
+        spec$panel_col["other"]
+    }
 
     render_language_template(
-        spec$panel_grid,
-        list(panel_count = panel_count, n_rows = n_rows, n_cols = n_cols)
+        spec[[paste0(template_prefix, "_grid")]],
+        list(
+            chart = chart,
+            panel_count = panel_count,
+            n_rows = n_rows,
+            n_cols = n_cols,
+            row_label = unname(row_label),
+            col_label = unname(col_label)
+        )
     )
 }
 
 #' @keywords internal
-describe_facet_values_sentence <- function(build, lang = "en") {
-    layout <- build$layout$layout
-    if (is.null(layout) || !nrow(layout) || !"PANEL" %in% names(layout)) {
-        return("")
-    }
-
-    reserved <- c("PANEL", "ROW", "COL", "SCALE_X", "SCALE_Y", "COORD")
-    facet_vars <- setdiff(names(layout), reserved)
-    if (!length(facet_vars)) {
-        return("")
-    }
-
-    pieces <- character()
-    panel_order <- order(layout$PANEL)
-    spec <- language_spec(lang)
-
-    for (facet_var in facet_vars) {
-        vals <- as.character(layout[[facet_var]][panel_order])
-        vals <- vals[nzchar(trimws(vals))]
-        vals <- unique(vals)
-        n_vals <- length(vals)
-        if (n_vals <= 1) {
-            next
-        }
-
-        facet_name <- gsub("_", " ", facet_var, fixed = TRUE)
-        if (n_vals <= 8) {
-            sentence <- render_language_template(
-                spec$facet_values,
-                list(
-                    facet_name = facet_name,
-                    values = join_language_items(quote_values(vals), lang)
-                )
-            )
-        } else {
-            sentence <- render_language_template(
-                spec$facet_span,
-                list(
-                    facet_name = facet_name,
-                    n_vals = n_vals,
-                    first_value = vals[1],
-                    last_value = vals[n_vals]
-                )
-            )
-        }
-        pieces <- c(pieces, sentence)
-    }
-
-    pieces[nzchar(pieces)]
-}
-
-#' @keywords internal
-describe_discrete_scales_sentence <- function(build, lang = "en") {
+describe_discrete_scales_sentence <- function(build, lang) {
     scales <- build$plot$scales$scales
     if (!length(scales)) {
         return("")
@@ -175,7 +255,7 @@ describe_discrete_scales_sentence <- function(build, lang = "en") {
             )
         }
 
-        aes_label <- aesthetic_label(aes_key, lang = lang)
+        aes_label <- aesthetic_label(aes_key, lang)
         aes_label <- apply_language_case(aes_label, spec$aesthetic_case)
         if (nzchar(title)) {
             sentence <- render_language_template(
@@ -197,33 +277,22 @@ describe_discrete_scales_sentence <- function(build, lang = "en") {
 }
 
 #' @keywords internal
-describe_plot_labels_sentences <- function(p, lang = "en") {
-    labels <- p$labels
-    pieces <- c(
-        label_sentence(labels$title, "title", lang = lang),
-        label_sentence(labels$subtitle, "subtitle", lang = lang),
-        label_sentence(labels$caption, "caption", lang = lang)
-    )
-    pieces[nzchar(pieces)]
-}
-
-#' @keywords internal
-label_sentence <- function(value, label_name, lang = "en") {
-    if (is.null(value)) {
-        return("")
+append_plot_title <- function(sentence, p, lang, include_title) {
+    if (!include_title) {
+        return(sentence)
     }
 
-    value <- normalize_label_text(value)
-    if (!length(value) || !nzchar(value)) {
-        return("")
+    title <- normalize_label_text(p$labels$title)
+    if (!nzchar(title)) {
+        return(sentence)
     }
 
     spec <- language_spec(lang)
     render_language_template(
-        spec$label,
+        spec$chart_with_title,
         list(
-            label = language_lookup(lang, "labels", label_name),
-            value = value
+            chart = sub("[.]$", "", sentence),
+            title = title
         )
     )
 }
@@ -287,6 +356,15 @@ geom_class_to_chart_type_key <- function(geom_class) {
 }
 
 #' @keywords internal
+layer_to_chart_type_key <- function(layer) {
+    if (inherits(layer$geom, "GeomBar") && inherits(layer$stat, "StatBin")) {
+        return("histogram")
+    }
+
+    geom_class_to_chart_type_key(class(layer$geom)[1])
+}
+
+#' @keywords internal
 aesthetic_key <- function(aesthetic) {
     switch(
         aesthetic,
@@ -300,6 +378,6 @@ aesthetic_key <- function(aesthetic) {
 }
 
 #' @keywords internal
-aesthetic_label <- function(aesthetic, lang = "en") {
+aesthetic_label <- function(aesthetic, lang) {
     language_lookup(lang, "aesthetics", aesthetic_key(aesthetic))
 }

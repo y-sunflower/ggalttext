@@ -5,7 +5,7 @@ alt_text_languages <- function() {
         en = list(
             conjunction = "and",
             serial_comma = TRUE,
-            single_chart_case = "title",
+            single_chart_case = "sentence",
             aesthetic_case = "title",
             chart_types = c(
                 scatter_plot = "scatter plot",
@@ -32,29 +32,30 @@ alt_text_languages <- function() {
                 line_type = "line type",
                 shape = "shape"
             ),
-            labels = c(
-                title = "Title",
-                subtitle = "Subtitle",
-                caption = "Caption"
-            ),
+            panel_row = c(one = "row", other = "rows"),
+            panel_col = c(one = "column", other = "columns"),
             chart_unknown = "Chart, without more information.",
             chart_combined = "Combined chart with {types}.",
+            chart_data_one = "{chart} of {data}.",
+            chart_data_two = "{chart} of {y} by {x}.",
+            chart_data_heatmap = "{chart} of {fill} by {y} and {x}.",
             panel_simple = "The data is shown in {panel_count} small charts.",
             panel_grid = paste0(
                 "The data is split into {panel_count} small charts ",
-                "arranged in a {n_rows} row(s) by {n_cols} col(s) grid."
+                "arranged in a grid with {n_rows} {row_label} and ",
+                "{n_cols} {col_label}."
             ),
-            facet_values = "Facets by {facet_name} are {values}.",
-            facet_span = paste0(
-                "Facets by {facet_name} span {n_vals} values from ",
-                "'{first_value}' to '{last_value}'."
+            chart_panel_simple = "{chart} split into {panel_count} small charts.",
+            chart_panel_grid = paste0(
+                "{chart} split into {panel_count} small charts arranged in a ",
+                "{n_rows}-row by {n_cols}-column grid."
             ),
+            chart_with_title = "{chart}, titled \u201c{title}\u201d.",
             scale_with_title = paste0(
                 "{aesthetic} categories ('{title}') run from {levels}."
             ),
             scale_without_title = "{aesthetic} categories run from {levels}.",
-            scale_span = "'{first_value}' to '{last_value}' ({n_vals} categories)",
-            label = "{label} is '{value}'."
+            scale_span = "'{first_value}' to '{last_value}' ({n_vals} categories)"
         ),
         fr = list(
             conjunction = "et",
@@ -86,13 +87,13 @@ alt_text_languages <- function() {
                 line_type = "type de ligne",
                 shape = "forme"
             ),
-            labels = c(
-                title = "Le titre",
-                subtitle = "Le sous-titre",
-                caption = "La legende"
-            ),
+            panel_row = c(one = "ligne", other = "lignes"),
+            panel_col = c(one = "colonne", other = "colonnes"),
             chart_unknown = "Graphique, sans information supplementaire.",
             chart_combined = "Graphique combine avec {types}.",
+            chart_data_one = "{chart} de {data}.",
+            chart_data_two = "{chart} de {y} en fonction de {x}.",
+            chart_data_heatmap = "{chart} de {fill} selon {y} et {x}.",
             panel_simple = paste0(
                 "Les donnees sont affichees dans {panel_count} ",
                 "petits graphiques."
@@ -100,21 +101,24 @@ alt_text_languages <- function() {
             panel_grid = paste0(
                 "Les donnees sont reparties en {panel_count} petits ",
                 "graphiques organises dans une grille de {n_rows} ",
-                "ligne(s) par {n_cols} colonne(s)."
+                "{row_label} par {n_cols} {col_label}."
             ),
-            facet_values = "Les facettes par {facet_name} sont {values}.",
-            facet_span = paste0(
-                "Les facettes par {facet_name} couvrent {n_vals} ",
-                "valeurs de '{first_value}' a '{last_value}'."
+            chart_panel_simple = paste0(
+                "{chart} reparti en {panel_count} petits graphiques."
             ),
+            chart_panel_grid = paste0(
+                "{chart} reparti en {panel_count} petits graphiques organises ",
+                "dans une grille de {n_rows} {row_label} par {n_cols} ",
+                "{col_label}."
+            ),
+            chart_with_title = "{chart}, avec pour titre \u00ab {title} \u00bb.",
             scale_with_title = paste0(
                 "Les categories de {aesthetic} ('{title}') vont de {levels}."
             ),
             scale_without_title = paste0(
                 "Les categories de {aesthetic} vont de {levels}."
             ),
-            scale_span = "'{first_value}' a '{last_value}' ({n_vals} categories)",
-            label = "{label} est '{value}'."
+            scale_span = "'{first_value}' a '{last_value}' ({n_vals} categories)"
         ),
         de = list(
             conjunction = "und",
@@ -146,46 +150,44 @@ alt_text_languages <- function() {
                 line_type = "Linientyp",
                 shape = "Form"
             ),
-            labels = c(
-                title = "Titel",
-                subtitle = "Untertitel",
-                caption = "Beschriftung"
-            ),
+            panel_row = c(one = "Zeile", other = "Zeilen"),
+            panel_col = c(one = "Spalte", other = "Spalten"),
             chart_unknown = "Diagramm ohne weitere Informationen.",
             chart_combined = "Kombiniertes Diagramm mit {types}.",
+            chart_data_one = "{chart} fuer {data}.",
+            chart_data_two = "{chart} fuer {y} nach {x}.",
+            chart_data_heatmap = "{chart} fuer {fill} nach {y} und {x}.",
             panel_simple = paste0(
                 "Die Daten werden in {panel_count} kleinen Diagrammen gezeigt."
             ),
             panel_grid = paste0(
                 "Die Daten sind auf {panel_count} kleine Diagramme in ",
-                "einem Raster mit {n_rows} Zeile(n) und {n_cols} ",
-                "Spalte(n) aufgeteilt."
+                "einem Raster mit {n_rows} {row_label} und {n_cols} ",
+                "{col_label} aufgeteilt."
             ),
-            facet_values = "Facetten nach {facet_name} sind {values}.",
-            facet_span = paste0(
-                "Facetten nach {facet_name} umfassen {n_vals} Werte ",
-                "von '{first_value}' bis '{last_value}'."
+            chart_panel_simple = paste0(
+                "{chart}, aufgeteilt auf {panel_count} kleine Diagramme."
             ),
+            chart_panel_grid = paste0(
+                "{chart}, aufgeteilt auf {panel_count} kleine Diagramme in ",
+                "einem Raster mit {n_rows} {row_label} und {n_cols} ",
+                "{col_label}."
+            ),
+            chart_with_title = "{chart} mit dem Titel \u201e{title}\u201c.",
             scale_with_title = paste0(
                 "Kategorien fuer {aesthetic} ('{title}') reichen von {levels}."
             ),
             scale_without_title = paste0(
                 "Kategorien fuer {aesthetic} reichen von {levels}."
             ),
-            scale_span = "'{first_value}' bis '{last_value}' ({n_vals} Kategorien)",
-            label = "{label} ist '{value}'."
+            scale_span = "'{first_value}' bis '{last_value}' ({n_vals} Kategorien)"
         )
     )
 }
 
 #' @keywords internal
-match_language <- function(lang) {
-    match.arg(lang, choices = names(alt_text_languages()))
-}
-
-#' @keywords internal
 language_spec <- function(lang) {
-    alt_text_languages()[[match_language(lang)]]
+    alt_text_languages()[[lang]]
 }
 
 #' @keywords internal
