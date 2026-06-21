@@ -1,5 +1,7 @@
 # ggalttext
 
+<img src="https://github.com/JosephBARBIERDARNAL/static/blob/main/r-libs/ggalttext/image.png?raw=true" alt="ggalttext logo" align="right" width="150px"/>
+
 Make ggplot2 fully accessible by generating alternative text. `ggalttext` provides a main function, `generate_alt_text()`, which takes any ggplot2 object and generates a string describing the graph's content (**in multiple languages!**).
 
 This text is **not** intended to describe the plot word for word, nor how it was created. Rather, it aims to be concise and provide an overview of the plot's content, for example:
