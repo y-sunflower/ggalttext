@@ -7,11 +7,11 @@
 generate_alt_text(
   p,
   ...,
-  lang = "en",
+  lang = c("en", "fr", "de"),
   include_title = TRUE,
   max_chars = 125,
   error_on_excess = FALSE,
-  source = "default"
+  source = c("default", "auto", "origin")
 )
 }
 \arguments{
