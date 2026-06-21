@@ -92,6 +92,7 @@ Plot titles are included by default. Set `include_title = FALSE` to leave the ti
 
 ```r
 generate_alt_text(plot, include_title = FALSE)
+#> "Area chart split into 6 small charts arranged in a 2-row by 3-column grid."
 ```
 
 ### Length limit
@@ -106,6 +107,13 @@ Set `error_on_excess = TRUE` to raise an error instead of a warning when the thr
 
 ```r
 generate_alt_text(plot, max_chars = 100, error_on_excess = TRUE)
+```
+
+```r
+Error in `generate_alt_text()`:
+! Alternative text is more than 100 characters (138). This is above what's considered
+best for alt texts. Consider making it shorter with `include_title = FALSE` or increase
+this threshold with the `max_chars` argument.
 ```
 
 ### Flexibility
