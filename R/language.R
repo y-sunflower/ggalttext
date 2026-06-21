@@ -32,7 +32,6 @@ alt_text_languages <- function() {
                 line_type = "line type",
                 shape = "shape"
             ),
-            labels = c(title = "Title"),
             panel_row = c(one = "row", other = "rows"),
             panel_col = c(one = "column", other = "columns"),
             chart_unknown = "Chart, without more information.",
@@ -48,12 +47,12 @@ alt_text_languages <- function() {
                 "{chart} split into {panel_count} small charts arranged in a ",
                 "{n_rows}-row by {n_cols}-column grid."
             ),
+            chart_with_title = "{chart}, titled \u201c{title}\u201d.",
             scale_with_title = paste0(
                 "{aesthetic} categories ('{title}') run from {levels}."
             ),
             scale_without_title = "{aesthetic} categories run from {levels}.",
-            scale_span = "'{first_value}' to '{last_value}' ({n_vals} categories)",
-            label = "{label} is '{value}'."
+            scale_span = "'{first_value}' to '{last_value}' ({n_vals} categories)"
         ),
         fr = list(
             conjunction = "et",
@@ -85,7 +84,6 @@ alt_text_languages <- function() {
                 line_type = "type de ligne",
                 shape = "forme"
             ),
-            labels = c(title = "Le titre"),
             panel_row = c(one = "ligne", other = "lignes"),
             panel_col = c(one = "colonne", other = "colonnes"),
             chart_unknown = "Graphique, sans information supplementaire.",
@@ -107,14 +105,14 @@ alt_text_languages <- function() {
                 "dans une grille de {n_rows} {row_label} par {n_cols} ",
                 "{col_label}."
             ),
+            chart_with_title = "{chart}, avec pour titre \u00ab {title} \u00bb.",
             scale_with_title = paste0(
                 "Les categories de {aesthetic} ('{title}') vont de {levels}."
             ),
             scale_without_title = paste0(
                 "Les categories de {aesthetic} vont de {levels}."
             ),
-            scale_span = "'{first_value}' a '{last_value}' ({n_vals} categories)",
-            label = "{label} est '{value}'."
+            scale_span = "'{first_value}' a '{last_value}' ({n_vals} categories)"
         ),
         de = list(
             conjunction = "und",
@@ -146,7 +144,6 @@ alt_text_languages <- function() {
                 line_type = "Linientyp",
                 shape = "Form"
             ),
-            labels = c(title = "Titel"),
             panel_row = c(one = "Zeile", other = "Zeilen"),
             panel_col = c(one = "Spalte", other = "Spalten"),
             chart_unknown = "Diagramm ohne weitere Informationen.",
@@ -167,14 +164,14 @@ alt_text_languages <- function() {
                 "einem Raster mit {n_rows} {row_label} und {n_cols} ",
                 "{col_label}."
             ),
+            chart_with_title = "{chart} mit dem Titel \u201e{title}\u201c.",
             scale_with_title = paste0(
                 "Kategorien fuer {aesthetic} ('{title}') reichen von {levels}."
             ),
             scale_without_title = paste0(
                 "Kategorien fuer {aesthetic} reichen von {levels}."
             ),
-            scale_span = "'{first_value}' bis '{last_value}' ({n_vals} Kategorien)",
-            label = "{label} ist '{value}'."
+            scale_span = "'{first_value}' bis '{last_value}' ({n_vals} Kategorien)"
         )
     )
 }

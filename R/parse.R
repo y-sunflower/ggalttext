@@ -85,15 +85,21 @@ generate_alt_text <- function(
         chart = chart,
         lang = lang
     )
+    opening_sentence <- if (nzchar(panel_sentence)) {
+        panel_sentence
+    } else {
+        chart_sentence
+    }
+    opening_sentence <- append_plot_title(
+        opening_sentence,
+        p_main,
+        lang = lang,
+        include_title = include_title
+    )
 
     pieces <- c(
-        if (nzchar(panel_sentence)) panel_sentence else chart_sentence,
-        describe_discrete_scales_sentence(b, lang = lang),
-        describe_plot_labels_sentences(
-            p_main,
-            lang = lang,
-            include_title = include_title
-        )
+        opening_sentence,
+        describe_discrete_scales_sentence(b, lang = lang)
     )
 
     alt_text <- paste(pieces[nzchar(pieces)], collapse = " ")
@@ -106,8 +112,7 @@ generate_alt_text <- function(
             nchar(alt_text),
             "). ",
             "This is above what's considered best for alt texts. ",
-            "Consider making it shorter with `include_title`, ",
-            "argument or ",
+            "Consider making it shorter with `include_title = FALSE` or ",
             "increase this threshold with the `max_character` argument."
         )
         if (stop_on_max_character) {

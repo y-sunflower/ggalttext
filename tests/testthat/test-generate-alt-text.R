@@ -43,7 +43,7 @@ test_that("title is included when present and in the right order", {
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Scatter plot. Title is 'Fuel efficiency by weight'."
+        "Scatter plot, titled \u201cFuel efficiency by weight\u201d."
     )
 })
 
@@ -70,9 +70,9 @@ test_that("lang controls generated French text", {
         paste(
             paste0(
                 "Nuage de points reparti en 3 petits graphiques organises ",
-                "dans une grille de 1 ligne par 3 colonnes."
-            ),
-            "Le titre est 'Fuel efficiency'."
+                "dans une grille de 1 ligne par 3 colonnes, avec pour titre ",
+                "\u00ab Fuel efficiency \u00bb."
+            )
         )
     )
 })
@@ -123,19 +123,19 @@ test_that("Complex grid with title", {
     text <- generate_alt_text(p)
     expect_equal(
         text,
-        "Area chart split into 6 small charts arranged in a 2-row by 3-column grid. Title is 'Popularity of American names in the previous 30 years'."
+        "Area chart split into 6 small charts arranged in a 2-row by 3-column grid, titled \u201cPopularity of American names in the previous 30 years\u201d."
     )
 
     text <- generate_alt_text(p, lang = "fr")
     expect_equal(
         text,
-        "Graphique en aires reparti en 6 petits graphiques organises dans une grille de 2 lignes par 3 colonnes. Le titre est 'Popularity of American names in the previous 30 years'."
+        "Graphique en aires reparti en 6 petits graphiques organises dans une grille de 2 lignes par 3 colonnes, avec pour titre \u00ab Popularity of American names in the previous 30 years \u00bb."
     )
 
     text <- generate_alt_text(p, lang = "de")
     expect_equal(
         text,
-        "Flaechendiagramm, aufgeteilt auf 6 kleine Diagramme in einem Raster mit 2 Zeilen und 3 Spalten. Titel ist 'Popularity of American names in the previous 30 years'."
+        "Flaechendiagramm, aufgeteilt auf 6 kleine Diagramme in einem Raster mit 2 Zeilen und 3 Spalten mit dem Titel \u201ePopularity of American names in the previous 30 years\u201c."
     )
 })
 
@@ -145,7 +145,7 @@ test_that("html labels are normalized into plain text", {
         labs(title = "A<br><strong>bold</strong> move &amp; check")
 
     text <- generate_alt_text(p)
-    expect_equal(text, "Scatter plot. Title is 'A bold move & check'.")
+    expect_equal(text, "Scatter plot, titled \u201cA bold move & check\u201d.")
 })
 
 test_that("waffle geoms are recognised and discrete fill categories described", {

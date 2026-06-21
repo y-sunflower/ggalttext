@@ -50,15 +50,14 @@ plot <- ggplot(plot_data, aes(x = year, y = n, group = name, fill = name)) +
 plot
 ```
 
-![Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3 col(s) grid. Facets by name are 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica', and 'Patricia'. Title is 'Popularity of American names in the previous 30 years'.](./example.png)
+![Area chart split into 6 small charts arranged in a 2-row by 3-column grid, titled “Popularity of American names in the previous 30 years”.](./example.png)
 
 ```r
 library(ggalttext)
 
 generate_alt_text(plot)
-#> "Area Chart. The data is split into 6 small charts arranged in a 2 row(s) by 3
-# col(s) grid. Facets by name are 'Amanda', 'Deborah', 'Dorothy', 'Helen', 'Jessica',
-# and 'Patricia'. Title is 'Popularity of American names in the previous 30 years'."
+#> "Area chart split into 6 small charts arranged in a 2-row by 3-column grid,
+# titled “Popularity of American names in the previous 30 years”."
 ```
 
 ### Language
@@ -67,20 +66,18 @@ By default, it generates alt text in English, but there are other options such a
 
 ```r
 generate_alt_text(plot, lang = "fr")
-#> "Graphique en aires. Les donnees sont reparties en 6 petits graphiques organises
-# dans une grille de 2 ligne(s) par 3 colonne(s). Les facettes par name sont 'Amanda',
-# 'Deborah', 'Dorothy', 'Helen', 'Jessica' et 'Patricia'. Le titre est 'Popularity of
-# American names in the previous 30 years'."
+#> "Graphique en aires reparti en 6 petits graphiques organises dans une grille de
+# 2 lignes par 3 colonnes, avec pour titre « Popularity of American names in the
+# previous 30 years »."
 ```
 
 and `lang = "de"` (for German):
 
 ```r
 generate_alt_text(plot, lang = "de")
-#> "Flaechendiagramm. Die Daten sind auf 6 kleine Diagramme in einem Raster mit 2
-# Zeile(n) und 3 Spalte(n) aufgeteilt. Facetten nach name sind 'Amanda', 'Deborah',
-# 'Dorothy', 'Helen', 'Jessica' und 'Patricia'. Titel ist 'Popularity of American
-# names in the previous 30 years'."
+#> "Flaechendiagramm, aufgeteilt auf 6 kleine Diagramme in einem Raster mit 2 Zeilen
+# und 3 Spalten mit dem Titel „Popularity of American names in the previous 30
+# years“."
 ```
 
 > [!TIP]

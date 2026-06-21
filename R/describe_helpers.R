@@ -163,35 +163,22 @@ describe_discrete_scales_sentence <- function(build, lang = "en") {
 }
 
 #' @keywords internal
-describe_plot_labels_sentences <- function(
-    p,
-    lang = "en",
-    include_title = TRUE
-) {
-    labels <- p$labels
-    pieces <- c(
-        if (include_title) label_sentence(labels$title, "title", lang = lang)
-    )
-    pieces[nzchar(pieces)]
-}
-
-#' @keywords internal
-label_sentence <- function(value, label_name, lang = "en") {
-    if (is.null(value)) {
-        return("")
+append_plot_title <- function(sentence, p, lang = "en", include_title = TRUE) {
+    if (!include_title) {
+        return(sentence)
     }
 
-    value <- normalize_label_text(value)
-    if (!length(value) || !nzchar(value)) {
-        return("")
+    title <- normalize_label_text(p$labels$title)
+    if (!nzchar(title)) {
+        return(sentence)
     }
 
     spec <- language_spec(lang)
     render_language_template(
-        spec$label,
+        spec$chart_with_title,
         list(
-            label = language_lookup(lang, "labels", label_name),
-            value = value
+            chart = sub("[.]$", "", sentence),
+            title = title
         )
     )
 }
