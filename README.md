@@ -18,6 +18,14 @@ This text is **not** intended to describe the plot word for word, nor how it was
 
 ## Installation
 
+`ggalttext` can be installed from CRAN:
+
+```r
+install.packages("ggalttext")
+```
+
+or R-universe:
+
 ```r
 install.packages("ggalttext", repos = c("https://y-sunflower.r-universe.dev"))
 ```
