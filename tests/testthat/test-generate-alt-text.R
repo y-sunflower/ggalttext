@@ -335,6 +335,7 @@ test_that("waffle geoms are recognised and discrete fill categories described", 
 })
 
 test_that("alluvial geoms are recognised in every language", {
+    skip_if_not_installed("ggsankey")
     data <- data.frame(
         x = 1:3,
         node = c("A", "B", "C"),
