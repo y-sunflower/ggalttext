@@ -18,9 +18,6 @@ Suggests:
     babynames,
     ggtext,
     dplyr,
-    ggsankey,
     patchwork,
     testthat (>= 3.0.0)
-Remotes:
-    github::davidsjoberg/ggsankey
 Config/testthat/edition: 3
