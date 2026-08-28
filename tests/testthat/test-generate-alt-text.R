@@ -362,6 +362,16 @@ test_that("alluvial geoms are recognised in every language", {
         generate_alt_text(p, lang = "de"),
         "Alluvialdiagramm mit dem Titel \u201eRefugee origins\u201c."
     )
+
+    sankey <- ggplot(data) +
+        suppressWarnings(
+            ggsankey::geom_sankey_bump(
+                aes(x = x, node = node, value = value),
+                type = "sankey"
+            )
+        )
+
+    expect_equal(generate_alt_text(sankey), "Sankey.")
 })
 
 test_that("patchwork inset does not replace the primary chart description", {

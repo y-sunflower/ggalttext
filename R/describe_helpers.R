@@ -364,7 +364,7 @@ geom_class_to_chart_type_key <- function(geom_class) {
 
 #' @keywords internal
 layer_to_chart_type_key <- function(layer) {
-    stat_chart_type <- stat_to_chart_type_key(layer$stat)
+    stat_chart_type <- stat_to_chart_type_key(layer$stat, layer$stat_params)
     if (nzchar(stat_chart_type)) {
         return(stat_chart_type)
     }
@@ -377,9 +377,12 @@ layer_to_chart_type_key <- function(layer) {
 }
 
 #' @keywords internal
-stat_to_chart_type_key <- function(stat) {
+stat_to_chart_type_key <- function(stat, stat_params) {
     if (inherits(stat, "StatSankeyBumpFlow")) {
-        return("alluvial_chart")
+        if (identical(stat_params$type, "alluvial")) {
+            return("alluvial_chart")
+        }
+        return("sankey")
     }
 
     ""
