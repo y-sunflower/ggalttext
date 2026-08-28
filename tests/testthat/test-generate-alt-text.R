@@ -100,6 +100,18 @@ test_that("heatmaps describe the fill measure and both axes", {
     expect_equal(generate_alt_text(missing_fill), "Heatmap.")
 })
 
+test_that("continuous fill scales are not described as categories", {
+    p <- ggplot(mtcars, aes(wt, mpg, fill = mpg)) +
+        geom_point(shape = 21) +
+        scale_fill_continuous(name = "Mileage") +
+        labs(x = "Weight", y = "Mileage")
+
+    expect_equal(
+        generate_alt_text(p),
+        "Scatter plot of Mileage by Weight."
+    )
+})
+
 test_that("compatible combined charts share a data description", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
@@ -322,6 +334,46 @@ test_that("waffle geoms are recognised and discrete fill categories described", 
     )
 })
 
+test_that("alluvial geoms are recognised in every language", {
+    skip_if_not_installed("ggsankey")
+    data <- data.frame(
+        x = 1:3,
+        node = c("A", "B", "C"),
+        value = 1:3
+    )
+    p <- ggplot(data) +
+        suppressWarnings(
+            ggsankey::geom_sankey_bump(
+                aes(x = x, node = node, value = value),
+                type = "alluvial"
+            )
+        ) +
+        ggtitle("Refugee origins")
+
+    expect_equal(
+        generate_alt_text(p),
+        "Alluvial chart, titled \u201cRefugee origins\u201d."
+    )
+    expect_equal(
+        generate_alt_text(p, lang = "fr"),
+        "Graphique alluvial, avec pour titre \u00ab Refugee origins \u00bb."
+    )
+    expect_equal(
+        generate_alt_text(p, lang = "de"),
+        "Alluvialdiagramm mit dem Titel \u201eRefugee origins\u201c."
+    )
+
+    sankey <- ggplot(data) +
+        suppressWarnings(
+            ggsankey::geom_sankey_bump(
+                aes(x = x, node = node, value = value),
+                type = "sankey"
+            )
+        )
+
+    expect_equal(generate_alt_text(sankey), "Sankey.")
+})
+
 test_that("patchwork inset does not replace the primary chart description", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
@@ -337,6 +389,37 @@ test_that("patchwork inset does not replace the primary chart description", {
 
     text <- generate_alt_text(p)
     expect_equal(text, "Scatter plot.")
+})
+
+test_that("patchwork annotation panels do not replace the primary chart", {
+    title_data <- data.frame(
+        x = 0,
+        y = 0,
+        label = "Consumer Confidence Around the World"
+    )
+    title <- ggplot(title_data, aes(x, y)) +
+        ggtext::geom_textbox(aes(label = label)) +
+        theme_void()
+    sub_data <- data.frame(x = 0, y = 0, label = "Explanation")
+    subtitle <- ggplot(sub_data, aes(x, y)) +
+        ggtext::geom_textbox(aes(label = label)) +
+        theme_void()
+    chart <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_hline(yintercept = 20) +
+        geom_point() +
+        geom_line() +
+        facet_wrap(~cyl)
+
+    final_plot <- (title + subtitle) / chart
+
+    expect_equal(
+        generate_alt_text(final_plot),
+        paste0(
+            "Combined chart with scatter plot and line chart split into 3 ",
+            "small charts arranged in a ",
+            "1-row by 3-column grid."
+        )
+    )
 })
 
 test_that("source = auto uses built-in alt text when available", {

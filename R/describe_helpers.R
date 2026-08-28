@@ -215,6 +215,9 @@ describe_discrete_scales_sentence <- function(build, lang) {
         if (!length(aes)) {
             next
         }
+        if (!inherits(scale, "ScaleDiscrete")) {
+            next
+        }
 
         aes_key <- intersect(
             aes,
@@ -348,6 +351,10 @@ geom_class_to_chart_type_key <- function(geom_class) {
         GeomText = "annotated_chart",
         GeomLabel = "annotated_chart",
         GeomRichText = "annotated_chart",
+        GeomTextBox = "annotated_chart",
+        GeomHline = "annotated_chart",
+        GeomVline = "annotated_chart",
+        GeomAbline = "annotated_chart",
         GeomCurve = "annotated_chart",
         GeomWaffle = "waffle_chart",
         GeomSf = "map",
@@ -357,11 +364,28 @@ geom_class_to_chart_type_key <- function(geom_class) {
 
 #' @keywords internal
 layer_to_chart_type_key <- function(layer) {
+    stat_chart_type <- stat_to_chart_type_key(layer$stat, layer$stat_params)
+    if (nzchar(stat_chart_type)) {
+        return(stat_chart_type)
+    }
+
     if (inherits(layer$geom, "GeomBar") && inherits(layer$stat, "StatBin")) {
         return("histogram")
     }
 
     geom_class_to_chart_type_key(class(layer$geom)[1])
+}
+
+#' @keywords internal
+stat_to_chart_type_key <- function(stat, stat_params) {
+    if (inherits(stat, "StatSankeyBumpFlow")) {
+        if (identical(stat_params$type, "alluvial")) {
+            return("alluvial_chart")
+        }
+        return("sankey")
+    }
+
+    ""
 }
 
 #' @keywords internal

@@ -20,3 +20,13 @@
 - Run Air (`air format .`) and Jarl (`jarl check .`) before accepting changes. They should both be clean.
 - When making changes, make sure it works across all available languages
 - Never specify default value of arguments of internal functions
+
+## Example with poor alternative text
+
+If you receive an example of a chart that leads to a poor alt text, do the following:
+
+- figure out what leads to an unexpected poor text: is it a geom that is too niche? the code used to make the graph is particularly weird? etc
+- define what would be a great alt text for this specific chart that would match behavior for existing examples in the codebase and tests
+- figure out what needs to be updated to make this (and similar) chart having a better alt text when passed into ggaltext, without adding breaking changes
+- if expected behavior is unclear, ask user directly what to do, with 3 different options
+- implement the required changes and add regression test for this new code. Do not necessary reuse the exact same code, but something similar with mock data, to make the test suite fast enough and avoid having to handle real data
