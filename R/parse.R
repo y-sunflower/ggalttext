@@ -145,15 +145,37 @@ resolve_plot_for_alt <- function(p) {
         return(p)
     }
 
+    candidates <- plot_candidates_for_alt(p)
+    if (!length(candidates)) {
+        return(p)
+    }
+
+    scores <- vapply(candidates, score_plot_for_alt, numeric(1))
+    candidate <- candidates[[which.max(scores)]]
+    candidate
+}
+
+#' @keywords internal
+plot_candidates_for_alt <- function(p) {
     plots <- p$patches$plots
-    if (!length(plots)) {
-        return(p)
+    candidates <- if (length(plots)) {
+        unlist(
+            lapply(plots, plot_candidates_for_alt),
+            recursive = FALSE
+        )
+    } else {
+        list()
     }
 
-    candidate <- plots[[1]]
-    if (!inherits(candidate, "ggplot")) {
-        return(p)
+    c(list(p), candidates)
+}
+
+#' @keywords internal
+score_plot_for_alt <- function(p) {
+    if (!inherits(p, "ggplot")) {
+        return(0)
     }
 
-    resolve_plot_for_alt(candidate)
+    keys <- vapply(p$layers, layer_to_chart_type_key, character(1))
+    sum(!keys %in% c("chart", "annotated_chart"))
 }

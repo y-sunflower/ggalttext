@@ -368,6 +368,37 @@ test_that("patchwork inset does not replace the primary chart description", {
     expect_equal(text, "Scatter plot.")
 })
 
+test_that("patchwork annotation panels do not replace the primary chart", {
+    title_data <- data.frame(
+        x = 0,
+        y = 0,
+        label = "Consumer Confidence Around the World"
+    )
+    title <- ggplot(title_data, aes(x, y)) +
+        ggtext::geom_textbox(aes(label = label)) +
+        theme_void()
+    sub_data <- data.frame(x = 0, y = 0, label = "Explanation")
+    subtitle <- ggplot(sub_data, aes(x, y)) +
+        ggtext::geom_textbox(aes(label = label)) +
+        theme_void()
+    chart <- ggplot(mtcars, aes(wt, mpg)) +
+        geom_hline(yintercept = 20) +
+        geom_point() +
+        geom_line() +
+        facet_wrap(~cyl)
+
+    final_plot <- (title + subtitle) / chart
+
+    expect_equal(
+        generate_alt_text(final_plot),
+        paste0(
+            "Combined chart with scatter plot and line chart split into 3 ",
+            "small charts arranged in a ",
+            "1-row by 3-column grid."
+        )
+    )
+})
+
 test_that("source = auto uses built-in alt text when available", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +
