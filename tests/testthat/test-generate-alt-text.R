@@ -322,6 +322,35 @@ test_that("waffle geoms are recognised and discrete fill categories described", 
     )
 })
 
+test_that("alluvial geoms are recognised in every language", {
+    data <- data.frame(
+        x = 1:3,
+        node = c("A", "B", "C"),
+        value = 1:3
+    )
+    p <- ggplot(data) +
+        suppressWarnings(
+            ggsankey::geom_sankey_bump(
+                aes(x = x, node = node, value = value),
+                type = "alluvial"
+            )
+        ) +
+        ggtitle("Refugee origins")
+
+    expect_equal(
+        generate_alt_text(p),
+        "Alluvial chart, titled \u201cRefugee origins\u201d."
+    )
+    expect_equal(
+        generate_alt_text(p, lang = "fr"),
+        "Graphique alluvial, avec pour titre \u00ab Refugee origins \u00bb."
+    )
+    expect_equal(
+        generate_alt_text(p, lang = "de"),
+        "Alluvialdiagramm mit dem Titel \u201eRefugee origins\u201c."
+    )
+})
+
 test_that("patchwork inset does not replace the primary chart description", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +

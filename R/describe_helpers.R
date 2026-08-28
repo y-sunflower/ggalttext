@@ -357,11 +357,25 @@ geom_class_to_chart_type_key <- function(geom_class) {
 
 #' @keywords internal
 layer_to_chart_type_key <- function(layer) {
+    stat_chart_type <- stat_to_chart_type_key(layer$stat)
+    if (nzchar(stat_chart_type)) {
+        return(stat_chart_type)
+    }
+
     if (inherits(layer$geom, "GeomBar") && inherits(layer$stat, "StatBin")) {
         return("histogram")
     }
 
     geom_class_to_chart_type_key(class(layer$geom)[1])
+}
+
+#' @keywords internal
+stat_to_chart_type_key <- function(stat) {
+    if (inherits(stat, "StatSankeyBumpFlow")) {
+        return("alluvial_chart")
+    }
+
+    ""
 }
 
 #' @keywords internal
