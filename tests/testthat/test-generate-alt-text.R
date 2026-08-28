@@ -100,6 +100,18 @@ test_that("heatmaps describe the fill measure and both axes", {
     expect_equal(generate_alt_text(missing_fill), "Heatmap.")
 })
 
+test_that("continuous fill scales are not described as categories", {
+    p <- ggplot(mtcars, aes(wt, mpg, fill = mpg)) +
+        geom_point(shape = 21) +
+        scale_fill_continuous(name = "Mileage") +
+        labs(x = "Weight", y = "Mileage")
+
+    expect_equal(
+        generate_alt_text(p),
+        "Scatter plot of Mileage by Weight."
+    )
+})
+
 test_that("compatible combined charts share a data description", {
     p <- ggplot(mtcars, aes(wt, mpg)) +
         geom_point() +

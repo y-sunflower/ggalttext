@@ -215,6 +215,9 @@ describe_discrete_scales_sentence <- function(build, lang) {
         if (!length(aes)) {
             next
         }
+        if (!inherits(scale, "ScaleDiscrete")) {
+            next
+        }
 
         aes_key <- intersect(
             aes,
