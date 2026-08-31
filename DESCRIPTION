@@ -1,6 +1,6 @@
 Package: ggalttext
 Title: Make 'ggplot2' Fully Accessible by Generating Alternative Text
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: 
     person("Joseph", "Barbier", , "joseph@ysunflower.com", role = c("aut", "cre", "cph"))
 Description: Generates concise alternative text for data visualizations created
